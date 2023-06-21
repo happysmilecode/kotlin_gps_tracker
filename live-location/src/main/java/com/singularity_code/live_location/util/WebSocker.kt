@@ -1,0 +1,39 @@
+package com.singularity_code.live_location.util
+
+import android.util.Log
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.WebSocket
+import okhttp3.WebSocketListener
+
+fun websocket(): WebSocket {
+    val client = OkHttpClient()
+    val request =
+        Request.Builder().url("http://websocket.anakpintarstudio.com?id=GPSServer1")
+            .build()
+    return client.newWebSocket(
+        request,
+        object : WebSocketListener() {
+            override fun onOpen(webSocket: WebSocket, response: Response) {
+                Log.d("TAG", "WebSocket: Opened")
+                super.onOpen(webSocket, response)
+            }
+
+            override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+                Log.d("TAG", "WebSocket: Failure ${t.message ?: t.cause?.message}")
+                super.onFailure(webSocket, t, response)
+            }
+
+            override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+                Log.d("TAG", "WebSocket: Closed")
+                super.onClosed(webSocket, code, reason)
+            }
+
+            override fun onMessage(webSocket: WebSocket, text: String) {
+                Log.d("TAG", "WebSocket: Message $text")
+                super.onMessage(webSocket, text)
+            }
+        }
+    )
+}
