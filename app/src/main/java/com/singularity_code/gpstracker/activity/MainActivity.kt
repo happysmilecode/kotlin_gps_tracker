@@ -1,6 +1,7 @@
 package com.singularity_code.gpstracker.activity
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -25,13 +26,16 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.maps.model.LatLng
 import com.singularity_code.gpstracker.ui.theme.GPSTrackerTheme
 import com.singularity_code.gpstracker.util.CHANNEL_DESCRIPTION
 import com.singularity_code.gpstracker.util.CHANNEL_ID
 import com.singularity_code.gpstracker.util.CHANNEL_NAME
-import com.singularity_code.live_location.LiveLocationService
-import com.singularity_code.live_location.util.getLiveLocationServiceBinder
-import kotlinx.coroutines.flow.Flow
+import com.singularity_code.live_location.util.pattern.LiveLocationNetworkInteractor
+import com.singularity_code.live_location.util.pattern.LiveLocationServiceInteractor
+import com.singularity_code.live_location.util.pattern.LiveLocationServiceInteractorAbs
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
@@ -39,14 +43,68 @@ class MainActivity : ComponentActivity() {
         const val LOCATION_PERMISSION_REQUEST_CODE = 100
     }
 
-    private val liveLocationServiceBinder: Flow<LiveLocationService.LocalBinder?>
+    /*private val liveLocationServiceBinder: Flow<LiveLocationService.LocalBinder?>
             by getLiveLocationServiceBinder(
                 channelID = CHANNEL_ID,
                 channelName = CHANNEL_NAME,
                 channelDescription = CHANNEL_DESCRIPTION,
                 lifecycleOwner = this,
                 coroutineScope = lifecycleScope
-            )
+            )*/
+
+    private val location = MutableStateFlow<LatLng?>(null)
+    private val liveLocationRunning = MutableStateFlow(false)
+    private val liveLocationError = MutableStateFlow<String?>(null)
+
+    private val liveLocationServiceInteractor =
+        object : LiveLocationServiceInteractorAbs() {
+            override val context: Context = this@MainActivity
+            override val samplingRate: Long = 5000
+            override val networkInteractor: LiveLocationNetworkInteractor? = null
+
+            override fun onServiceStatusChanged(
+                serviceStatus: LiveLocationServiceInteractor.ServiceStatus
+            ) {
+                lifecycleScope.launch {
+                    liveLocationRunning.emit(
+                        when (serviceStatus) {
+                            LiveLocationServiceInteractor.ServiceStatus.RUNNING ->
+                                true
+
+                            LiveLocationServiceInteractor.ServiceStatus.DEAD ->
+                                false
+                        }
+                    )
+                }
+            }
+
+            override fun onError(
+                message: String?
+            ) {
+                lifecycleScope.launch {
+                    liveLocationError.emit(
+                        message
+                    )
+                }
+            }
+
+            override fun onReceiveUpdate(
+                latitude: Double,
+                longitude: Double,
+                accuracy: Float,
+                updateTime: Long
+            ) {
+                lifecycleScope.launch {
+                    location.emit(
+                        LatLng(
+                            latitude,
+                            longitude
+                        )
+                    )
+                }
+            }
+
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,7 +152,12 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.padding(16.dp, 16.dp, 0.dp, 0.dp),
                             style = MaterialTheme.typography.titleLarge
                         )
-                        Sender(liveLocationServiceBinder)
+                        Sender(
+                            liveLocationServiceInteractor,
+                            location.collectAsState().value,
+                            liveLocationRunning.collectAsState().value,
+                            liveLocationError.collectAsState().value
+                        )
                         Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
@@ -105,12 +168,11 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Sender(
-    liveLocationServiceBinder: Flow<LiveLocationService.LocalBinder?>
+    interactor: LiveLocationServiceInteractor,
+    location: LatLng?,
+    liveLocationRunning: Boolean,
+    liveLocationError: String?
 ) {
-    val binder = liveLocationServiceBinder.collectAsState(initial = null).value
-    val location = binder?.currentLocation?.collectAsState(null)?.value
-    val liveLocationRunning = binder?.liveLocationRunning?.collectAsState(false)?.value
-    val liveLocationError = binder?.liveLocationError?.collectAsState("")?.value
 
     Card(
         modifier = Modifier
@@ -128,7 +190,7 @@ fun Sender(
             Row {
                 Button(
                     onClick = {
-                        binder?.stopService()
+                        interactor.stopService()
                     },
                     modifier = Modifier.weight(1f),
                     enabled = liveLocationRunning ?: false
@@ -138,11 +200,14 @@ fun Sender(
                 Spacer(modifier = Modifier.width(8.dp))
                 Button(
                     onClick = {
-                        binder?.startService(
-                            serviceID = 1003,
-                            channelID = CHANNEL_ID,
-                            serviceTitle = "Live Location",
+                        interactor.startService(
+                            foregroundServiceID = 1003,
+                            notificationTitle = "Live Location",
                             notificationMessage = "Singularity Live Location",
+                            notificationChannelID = CHANNEL_ID,
+                            notificationChannelDescription = CHANNEL_DESCRIPTION,
+                            notificationChannelName = CHANNEL_NAME
+
                         )
                     },
                     modifier = Modifier.weight(1f),
