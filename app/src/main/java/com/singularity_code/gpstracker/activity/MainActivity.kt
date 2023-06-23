@@ -20,7 +20,8 @@ import com.singularity_code.gpstracker.ui.theme.GPSTrackerTheme
 import com.singularity_code.gpstracker.util.CHANNEL_DESCRIPTION
 import com.singularity_code.gpstracker.util.CHANNEL_ID
 import com.singularity_code.gpstracker.util.CHANNEL_NAME
-import com.singularity_code.live_location.util.pattern.LiveLocationNetworkInteractor
+import com.singularity_code.live_location.util.enums.NetworkMethod
+import com.singularity_code.live_location.util.pattern.LiveLocationNetworkConfiguration
 import com.singularity_code.live_location.util.pattern.LiveLocationServiceInteractor
 import com.singularity_code.live_location.util.pattern.LiveLocationServiceInteractorAbs
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -49,7 +50,12 @@ class MainActivity : ComponentActivity() {
         object : LiveLocationServiceInteractorAbs() {
             override val context: Context = this@MainActivity
             override val samplingRate: Long = 5000
-            override val networkInteractor: LiveLocationNetworkInteractor? = null
+            override val networkConfiguration: LiveLocationNetworkConfiguration =
+                object : LiveLocationNetworkConfiguration {
+                    override val url: String = "http://websocket.anakpintarstudio.com?id=terserah_mau_diisi_apa"
+                    override val networkMethod: NetworkMethod = NetworkMethod.WEBSOCKET
+                    override val headers: HashMap<String, String> = hashMapOf()
+                }
 
             override fun onServiceStatusChanged(
                 serviceStatus: LiveLocationServiceInteractor.ServiceStatus
@@ -194,9 +200,8 @@ fun Sender(
                             notificationTitle = "Live Location",
                             notificationMessage = "Singularity Live Location",
                             notificationChannelID = CHANNEL_ID,
-                            notificationChannelDescription = CHANNEL_DESCRIPTION,
-                            notificationChannelName = CHANNEL_NAME
-
+                            notificationChannelName = CHANNEL_NAME,
+                            notificationChannelDescription = CHANNEL_DESCRIPTION
                         )
                     },
                     modifier = Modifier.weight(1f),

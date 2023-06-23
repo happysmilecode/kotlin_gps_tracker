@@ -3,11 +3,22 @@ package com.singularity_code.live_location.util
 import android.util.Log
 import okhttp3.*
 
-fun websocket(): WebSocket {
+fun websocket(
+    apiURL: String,
+    headers: HashMap<String,String>
+): WebSocket {
     val client = OkHttpClient()
-    val request =
-        Request.Builder().url("http://websocket.anakpintarstudio.com?id=GPSServer1")
-            .build()
+    val request = Request.Builder()
+        .apply {
+            url(apiURL)
+            headers.forEach{
+                addHeader(
+                    it.key, it.value
+                )
+            }
+        }
+        .build()
+
     return client.newWebSocket(
         request,
         object : WebSocketListener() {

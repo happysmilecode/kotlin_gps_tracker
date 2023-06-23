@@ -4,7 +4,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.ServiceConnection
 import android.os.IBinder
-import androidx.annotation.MainThread
 import com.singularity_code.live_location.LiveLocationService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +17,7 @@ abstract class LiveLocationServiceInteractorAbs : LiveLocationServiceInteractor 
     /** GPS Sampling rate in millisecond **/
     abstract override val samplingRate: Long
 
-    abstract override val networkInteractor: LiveLocationNetworkInteractor?
+    abstract override val networkConfiguration: LiveLocationNetworkConfiguration
 
     private var binder: LiveLocationService.LocalBinder? = null
     private val coroutineJobs = arrayListOf<Job>()
@@ -99,16 +98,18 @@ abstract class LiveLocationServiceInteractorAbs : LiveLocationServiceInteractor 
                 notificationTitle = notificationTitle,
                 notificationMessage = notificationMessage,
                 notificationPriority = notificationPriority,
+                networkConfiguration = this.networkConfiguration
             ),
             serviceConnection,
             Context.BIND_AUTO_CREATE
         )
     }
 
-    @MainThread
     override fun stopService() {
-        context.unbindService(
-            serviceConnection
-        )
+        runCatching {
+            context.unbindService(
+                serviceConnection
+            )
+        }
     }
 }

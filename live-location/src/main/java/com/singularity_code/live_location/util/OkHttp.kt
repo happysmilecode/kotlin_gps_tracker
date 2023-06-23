@@ -14,15 +14,15 @@ import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
 fun defaultOkhttp(
-    context: Context,
+    /*context: Context,*/
     /*authPreference: Preference*/
 ) = OkHttpClient.Builder()
     .apply {
-        addInterceptor(
+        /*addInterceptor(
             chuckerInterceptor(
                 context
             )
-        )
+        )*/
         /**
          * handle common IO error
          */

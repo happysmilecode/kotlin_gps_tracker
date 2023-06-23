@@ -12,13 +12,8 @@ val Context.hasLocationPermission: Boolean
     }
 
 fun Context.checkPermission(permission: String): Boolean {
-    if (ActivityCompat.checkSelfPermission(
-            this,
-            permission
-        ) != PackageManager.PERMISSION_GRANTED
-    ) {
-        return false
-    }
-
-    return true
+    return ActivityCompat.checkSelfPermission(
+        this,
+        permission
+    ) == PackageManager.PERMISSION_GRANTED
 }

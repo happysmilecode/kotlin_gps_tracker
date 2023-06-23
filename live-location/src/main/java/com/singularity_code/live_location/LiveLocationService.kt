@@ -18,17 +18,20 @@ import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.*
+import com.singularity_code.live_location.data.Repository
+import com.singularity_code.live_location.data.RestfulRepository
+import com.singularity_code.live_location.data.WebSocketRepository
 import com.singularity_code.live_location.util.ERROR_MISSING_LOCATION_PERMISSION
 import com.singularity_code.live_location.util.ErrorMessage
+import com.singularity_code.live_location.util.enums.NetworkMethod
 import com.singularity_code.live_location.util.isGPSEnabled
-import com.singularity_code.live_location.util.websocket
+import com.singularity_code.live_location.util.pattern.LiveLocationNetworkConfiguration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import okhttp3.WebSocket
 import java.io.File
 
 class LiveLocationService : Service() {
@@ -42,6 +45,7 @@ class LiveLocationService : Service() {
             notificationChannelDescription: String,
             notificationTitle: String,
             notificationMessage: String,
+            networkConfiguration: LiveLocationNetworkConfiguration,
             notificationPriority: Int
         ): Intent {
             return Intent(
@@ -55,6 +59,9 @@ class LiveLocationService : Service() {
                 putExtra("notificationTitle", notificationTitle)
                 putExtra("notificationMessage", notificationMessage)
                 putExtra("notificationPriority", notificationPriority)
+                putExtra("url", networkConfiguration.url)
+                putExtra("headers", networkConfiguration.headers.toString())
+                putExtra("networkMethod", networkConfiguration.networkMethod.ordinal)
             }
         }
     }
@@ -91,7 +98,7 @@ class LiveLocationService : Service() {
                         )
                     )
 
-                    webSocket.send("Live Location LatLng: ${lastLocation.latitude}, ${lastLocation.longitude}")
+                    repository.sendData("Live Location LatLng: ${lastLocation.latitude}, ${lastLocation.longitude}")
                     liveLocationError.emit(null)
                 }
 
@@ -108,7 +115,7 @@ class LiveLocationService : Service() {
         }
     }
 
-    private lateinit var webSocket: WebSocket
+    private lateinit var repository: Repository
     private var foregroundServiceID: Int? = null
     private lateinit var notificationChannelID: String
     private lateinit var notificationChannelName: String
@@ -116,6 +123,9 @@ class LiveLocationService : Service() {
     private lateinit var notificationTitle: String
     private lateinit var notificationMessage: String
     private var notificationPriority: Int = NotificationCompat.PRIORITY_DEFAULT
+    private lateinit var url: String
+    private lateinit var headers: HashMap<String, String>
+    private lateinit var networkMethod: NetworkMethod
 
     private fun startLocationService(
         intent: Intent?
@@ -123,11 +133,17 @@ class LiveLocationService : Service() {
         foregroundServiceID = intent?.getIntExtra("foregroundServiceID", 1005) ?: 1005
         notificationChannelID = intent?.getStringExtra("notificationChannelID") ?: "notificationChannelID"
         notificationChannelName = intent?.getStringExtra("notificationChannelName") ?: "notificationChannelName"
-        notificationChannelDescription = intent?.getStringExtra("notificationChannelDescription") ?: "notificationChannelDescription"
+        notificationChannelDescription =
+            intent?.getStringExtra("notificationChannelDescription") ?: "notificationChannelDescription"
         notificationTitle = intent?.getStringExtra("notificationTitle") ?: "notificationTitle"
         notificationMessage = intent?.getStringExtra("notificationMessage") ?: "notificationMessage"
         notificationPriority = intent?.getIntExtra("notificationPriority", NotificationCompat.PRIORITY_DEFAULT)
             ?: NotificationCompat.PRIORITY_DEFAULT
+        url = intent?.getStringExtra("url") ?: ""
+        headers = (intent?.getStringExtra("headers") ?: "")
+            .let { hashMapOf() }
+        networkMethod = (intent?.getIntExtra("networkMethod", 0) ?: 0)
+            .let { ordinal -> NetworkMethod.values()[ordinal] }
 
         coroutineScope.launch {
 
@@ -174,7 +190,15 @@ class LiveLocationService : Service() {
 
             /** prepare websocket connection **/
             run {
-                webSocket = websocket()
+                repository = when (networkMethod) {
+                    NetworkMethod.WEBSOCKET -> WebSocketRepository(
+                        url, headers
+                    )
+
+                    else -> RestfulRepository(
+                        url, headers
+                    )
+                }
             }
 
             /** start location watcher **/
@@ -210,7 +234,7 @@ class LiveLocationService : Service() {
 
         /** close web socker **/
         run {
-            webSocket.close(1000, "service stop")
+            repository.closeConnection()
         }
 
         coroutineScope.launch {

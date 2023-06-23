@@ -9,14 +9,11 @@ interface LiveLocationServiceInteractor {
     }
 
     val context: Context
-//    val notificationChannelID: String
-//    val notificationChannelName: String
-//    val notificationChannelDescription: String
 
     /** GPS Sampling rate in millisecond **/
     val samplingRate: Long
 
-    val networkInteractor: LiveLocationNetworkInteractor?
+    val networkConfiguration: LiveLocationNetworkConfiguration
 
     fun startService(
         foregroundServiceID: Int = 1003,
