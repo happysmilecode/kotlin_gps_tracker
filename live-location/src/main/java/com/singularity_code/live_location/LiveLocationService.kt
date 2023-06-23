@@ -99,6 +99,13 @@ class LiveLocationService : Service() {
                     )
 
                     repository.sendData("Live Location LatLng: ${lastLocation.latitude}, ${lastLocation.longitude}")
+                        .mapLeft {
+                            liveLocationError.emit(it)
+                        }
+                        .map {
+                            liveLocationError.emit(null)
+                        }
+
                     liveLocationError.emit(null)
                 }
 
