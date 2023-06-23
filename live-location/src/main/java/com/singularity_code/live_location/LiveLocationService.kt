@@ -133,10 +133,12 @@ class LiveLocationService : Service() {
     private lateinit var url: String
     private lateinit var headers: HashMap<String, String>
     private lateinit var networkMethod: NetworkMethod
+    private var lastIntent: Intent? = null
 
     private fun startLocationService(
         intent: Intent?
     ) {
+        lastIntent = intent
         foregroundServiceID = intent?.getIntExtra("foregroundServiceID", 1005) ?: 1005
         notificationChannelID = intent?.getStringExtra("notificationChannelID") ?: "notificationChannelID"
         notificationChannelName = intent?.getStringExtra("notificationChannelName") ?: "notificationChannelName"
@@ -224,6 +226,10 @@ class LiveLocationService : Service() {
 
     }
 
+    private fun restartLocationService() {
+        startLocationService(lastIntent)
+    }
+
     private fun stopLocationService() {
 
         /** destroy notification **/
@@ -262,6 +268,8 @@ class LiveLocationService : Service() {
         val currentLocation: Flow<LocationData?> = this@LiveLocationService.currentLocation
         val liveLocationRunning = this@LiveLocationService.liveLocationRunning
         val isGPSEnabled: Boolean get() = this@LiveLocationService.isGPSEnabled
+
+        fun restartLocationService() = this@LiveLocationService.restartLocationService()
     }
 
     private fun createNotificationChannel() {

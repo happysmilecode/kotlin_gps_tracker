@@ -88,6 +88,10 @@ abstract class LiveLocationServiceInteractorAbs : LiveLocationServiceInteractor 
         notificationPriority: Int,
     ) {
 
+        if (binder != null) {
+            return binder!!.restartLocationService()
+        }
+
         context.bindService(
             LiveLocationService.createIntent(
                 context = context,
@@ -111,5 +115,8 @@ abstract class LiveLocationServiceInteractorAbs : LiveLocationServiceInteractor 
                 serviceConnection
             )
         }
+        onServiceStatusChanged(
+            LiveLocationServiceInteractor.ServiceStatus.DEAD
+        )
     }
 }
