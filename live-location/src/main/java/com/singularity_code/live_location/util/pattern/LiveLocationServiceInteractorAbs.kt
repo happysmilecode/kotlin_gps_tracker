@@ -12,9 +12,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 abstract class LiveLocationServiceInteractorAbs : LiveLocationServiceInteractor {
-    enum class ServiceStatus {
-        RUNNING, DEAD
-    }
 
     abstract override val context: Context
 
