@@ -192,13 +192,14 @@ class LiveLocationService : Service() {
             run {
                 repository = when (networkMethod) {
                     NetworkMethod.WEBSOCKET -> WebSocketRepository(
-                        url, headers
+                        url, headers, this@LiveLocationService
                     )
 
                     else -> RestfulRepository(
-                        url, headers
+                        url, headers, this@LiveLocationService
                     )
                 }
+                repository.openConnection()
             }
 
             /** start location watcher **/
@@ -232,7 +233,7 @@ class LiveLocationService : Service() {
             locationProviderClient.removeLocationUpdates(locationCallBack)
         }
 
-        /** close web socker **/
+        /** close web socket **/
         run {
             repository.closeConnection()
         }

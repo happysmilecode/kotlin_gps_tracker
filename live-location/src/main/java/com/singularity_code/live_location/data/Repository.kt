@@ -1,35 +1,33 @@
 package com.singularity_code.live_location.data
 
-import com.singularity_code.live_location.util.createRetrofitService
+import android.content.Context
+import arrow.core.Either
+import com.singularity_code.live_location.util.ErrorMessage
 import com.singularity_code.live_location.util.defaultOkhttp
 import com.singularity_code.live_location.util.websocket
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.Request
 import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import retrofit2.http.Body
-import retrofit2.http.POST
-import retrofit2.http.Path
+
 
 interface Repository {
     val url: String
     val headers: HashMap<String, String>
+    val context: Context
 
     fun openConnection()
 
-    fun sendData(
-        data: String
-    )
-
     fun closeConnection()
+
+    suspend fun sendData(
+        data: String
+    ): Either<ErrorMessage, String>
 }
 
 class WebSocketRepository(
     override val url: String,
     override val headers: HashMap<String, String>,
+    override val context: Context
 ) : Repository {
 
     private val webSocket by lazy {
@@ -43,8 +41,13 @@ class WebSocketRepository(
         // nothing to do
     }
 
-    override fun sendData(data: String) {
-        webSocket.send(data)
+    override suspend fun sendData(data: String): Either<ErrorMessage, String> {
+        return kotlin.runCatching {
+            val result = webSocket.send(data)
+            Either.Right(result.toString())
+        }.getOrElse {
+            Either.Left(it.message ?: it.cause?.message ?: "unknown error")
+        }
     }
 
     override fun closeConnection() {
@@ -55,39 +58,42 @@ class WebSocketRepository(
 
 class RestfulRepository(
     override val url: String,
-    override val headers: HashMap<String, String>
+    override val headers: HashMap<String, String>,
+    override val context: Context
 ) : Repository {
 
-    interface WebApi {
-        @POST("{endpoint}")
-        fun sendData(
-            @Path("endpoint") endpointURL: String,
-            @Body body: RequestBody
-        )
-    }
-
-    private val retrofit by lazy {
-        createRetrofitService(
-            WebApi::class.java,
-            defaultOkhttp(),
-            url
-        )
-    }
-
-    private val coroutineScope by lazy {
-        CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private val okHttpClient by lazy {
+        defaultOkhttp(context)
     }
 
     override fun openConnection() {
         // nothing to do
     }
 
-    override fun sendData(data: String) {
-        coroutineScope.launch {
-            retrofit.sendData(
-                body = data.toRequestBody(contentType = "text/plain".toMediaTypeOrNull()),
-                endpointURL = url
-            )
+    override suspend fun sendData(
+        data: String
+    ): Either<ErrorMessage, String> {
+        val requestBody: RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(), data)
+
+        val request: Request = Request.Builder()
+            .apply {
+                url(url)
+                post(requestBody)
+                headers.forEach {
+                    addHeader(it.key, it.value)
+                }
+            }
+            .build()
+
+        return runCatching {
+            val response = okHttpClient.newCall(request).execute()
+            if (response.isSuccessful) {
+                Either.Right(response.body?.string() ?: "nothing to show")
+            }else {
+                Either.Left(response.message)
+            }
+        }.getOrElse {
+            Either.Left(it.message ?: it.cause?.message ?: "unknown error")
         }
     }
 
