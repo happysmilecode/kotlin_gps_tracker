@@ -54,7 +54,10 @@ class MainActivity : ComponentActivity() {
                 object : LiveLocationNetworkConfiguration {
                     override val url: String = "http://websocket.anakpintarstudio.com?id=terserah_mau_diisi_apa"
                     override val networkMethod: NetworkMethod = NetworkMethod.RESTFULL
-                    override val headers: HashMap<String, String> = hashMapOf()
+                    override val headers: HashMap<String, String> = hashMapOf(
+                        "Header1" to "Bearer aasdasdadadadaa",
+                        "Header2" to "Bearer 23423094029u40932"
+                    )
                 }
 
             override fun onServiceStatusChanged(

@@ -18,6 +18,8 @@ import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.*
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.singularity_code.live_location.data.Repository
 import com.singularity_code.live_location.data.RestfulRepository
 import com.singularity_code.live_location.data.WebSocketRepository
@@ -60,7 +62,7 @@ class LiveLocationService : Service() {
                 putExtra("notificationMessage", notificationMessage)
                 putExtra("notificationPriority", notificationPriority)
                 putExtra("url", networkConfiguration.url)
-                putExtra("headers", networkConfiguration.headers.toString())
+                putExtra("headers", Gson().toJson(networkConfiguration.headers))
                 putExtra("networkMethod", networkConfiguration.networkMethod.ordinal)
             }
         }
@@ -150,7 +152,11 @@ class LiveLocationService : Service() {
             ?: NotificationCompat.PRIORITY_DEFAULT
         url = intent?.getStringExtra("url") ?: ""
         headers = (intent?.getStringExtra("headers") ?: "")
-            .let { hashMapOf() }
+            .let {
+                val gson = Gson()
+                val type = object : TypeToken<HashMap<String, String>>() {}.type
+                gson.fromJson(it, type)
+            }
         networkMethod = (intent?.getIntExtra("networkMethod", 0) ?: 0)
             .let { ordinal -> NetworkMethod.values()[ordinal] }
 
