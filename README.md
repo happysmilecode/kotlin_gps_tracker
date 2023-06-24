@@ -4,6 +4,7 @@ Note :
 - You will need context such activity context or application context both are fine.
 - The service will push the data for you, A.k.a automatic network syncronization. All you need are just setting up the network configuration.
 - You can use java or kotlin, the syntax won't have a lot different, you can contact me for more help.
+
 How to use it: 
 ```kotlin
 /** ## First you will need to create service interactor object,
