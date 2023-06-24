@@ -262,6 +262,10 @@ class LiveLocationService : Service() {
     }
 
     private fun stopLocationService() {
+        /** close web socket **/
+        run {
+            repository.closeConnection()
+        }
 
         /** destroy notification **/
         run {
@@ -275,11 +279,6 @@ class LiveLocationService : Service() {
         /** stop location watcher **/
         runCatching {
             locationProviderClient.removeLocationUpdates(locationCallBack)
-        }
-
-        /** close web socket **/
-        run {
-            repository.closeConnection()
         }
 
         coroutineScope.launch {

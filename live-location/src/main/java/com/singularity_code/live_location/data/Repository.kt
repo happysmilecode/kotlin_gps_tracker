@@ -1,10 +1,12 @@
 package com.singularity_code.live_location.data
 
 import android.content.Context
+import android.util.Log
 import arrow.core.Either
 import com.singularity_code.live_location.util.ErrorMessage
 import com.singularity_code.live_location.util.defaultOkhttp
 import com.singularity_code.live_location.util.websocket
+import kotlinx.coroutines.Job
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.Request
 import okhttp3.RequestBody
@@ -37,8 +39,17 @@ class WebSocketRepository(
         )
     }
 
+    private var socketPendingJob: Job? = null
+
     override fun openConnection() {
-        // nothing to do
+        socketPendingJob?.cancel()
+    }
+
+    override fun closeConnection() {
+        if (!webSocket.close(1000, "normal closure")) {
+            Log.d("TAG", "closeConnection: Normal closure not working, nuke the web socket.")
+            webSocket.cancel()
+        }
     }
 
     override suspend fun sendData(data: String): Either<ErrorMessage, String> {
@@ -48,10 +59,6 @@ class WebSocketRepository(
         }.getOrElse {
             Either.Left(it.message ?: it.cause?.message ?: "unknown error")
         }
-    }
-
-    override fun closeConnection() {
-        webSocket.close(200, "normal closure")
     }
 
 }
@@ -89,7 +96,7 @@ class RestfulRepository(
             val response = okHttpClient.newCall(request).execute()
             if (response.isSuccessful) {
                 Either.Right(response.body?.string() ?: "nothing to show")
-            }else {
+            } else {
                 Either.Left(response.message)
             }
         }.getOrElse {
