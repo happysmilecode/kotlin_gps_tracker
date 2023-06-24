@@ -91,6 +91,16 @@ private val liveLocationServiceInteractor =
         }
 ```
 
+This library will automatically sync your data to network, the body request will be
+```json
+{
+  "accuracy": 31.717,
+  "updateTime": 1687566473527,
+  "latitude": 37.29547,
+  "longitude": -121.1872217
+}
+```
+
 ## Design and Developed by :
 - [Stefanus Ayudha](https://github.com/stefanusayudha)
 - [Singularity Indonesia](https://github.com/SingularityIndonesia)
