@@ -93,20 +93,31 @@ class LiveLocationService : Service() {
 
             p0.runCatching {
                 coroutineScope.launch {
-                    currentLocation.emit(
-                        LocationData(
-                            locationResult = p0,
-                            updateTime = System.currentTimeMillis()
-                        )
-                    )
+                    val updateTime = System.currentTimeMillis()
 
-                    repository.sendData("Live Location LatLng: ${lastLocation.latitude}, ${lastLocation.longitude}")
+                    val payload = hashMapOf(
+                        "latitude" to lastLocation.latitude,
+                        "longitude" to lastLocation.longitude,
+                        "accuracy" to lastLocation.accuracy,
+                        "updateTime" to updateTime
+                    ).let {
+                        Gson().toJson(it)
+                    }
+
+                    repository.sendData(payload)
                         .mapLeft {
                             liveLocationError.emit(it)
                         }
                         .map {
                             liveLocationError.emit(null)
                         }
+
+                    currentLocation.emit(
+                        LocationData(
+                            locationResult = p0,
+                            updateTime
+                        )
+                    )
 
                     liveLocationError.emit(null)
                 }
