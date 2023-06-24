@@ -1,11 +1,5 @@
-# background-location-android
-
-Note : 
-- You will need context such activity context or application context both are fine.
-- The service will push the data for you, A.k.a automatic network syncronization. All you need are just setting up the network configuration.
-- You can use java or kotlin, the syntax won't have a lot different, you can contact me for more help.
-
-How to use it: 
+# Background Location Service
+## Setting Up
 ```kotlin
 /** ## First you will need to create service interactor object,
  *  as a proxy for Live Location services **/
@@ -91,6 +85,7 @@ private val liveLocationServiceInteractor =
         }
 ```
 
+## Networking
 This library will automatically sync your data to network, the body request will be
 ```json
 {
@@ -100,6 +95,22 @@ This library will automatically sync your data to network, the body request will
   "longitude": -121.1872217
 }
 ```
+
+## Permission
+You need to request all these permission in order to make it works:
+```xml
+<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+<uses-permission android:name="android.permission.INTERNET" />
+```
+
+## Note :
+- You will need context such activity context or application context both are fine.
+- The service will push the data for you, A.k.a automatic network syncronization. All you need are just setting up the network configuration.
+- You can use java or kotlin, the syntax won't have a lot different, you can contact me for more help.
+
 
 ## Design and Developed by :
 - [Stefanus Ayudha](https://github.com/stefanusayudha)
