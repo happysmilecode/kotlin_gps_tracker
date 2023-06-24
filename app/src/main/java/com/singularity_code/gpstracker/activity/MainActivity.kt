@@ -3,6 +3,7 @@ package com.singularity_code.gpstracker.activity
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.model.LatLng
@@ -21,9 +23,7 @@ import com.singularity_code.gpstracker.util.CHANNEL_DESCRIPTION
 import com.singularity_code.gpstracker.util.CHANNEL_ID
 import com.singularity_code.gpstracker.util.CHANNEL_NAME
 import com.singularity_code.live_location.util.enums.NetworkMethod
-import com.singularity_code.live_location.util.pattern.LiveLocationNetworkConfiguration
-import com.singularity_code.live_location.util.pattern.LiveLocationServiceInteractor
-import com.singularity_code.live_location.util.pattern.LiveLocationServiceInteractorAbs
+import com.singularity_code.live_location.util.pattern.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
@@ -49,7 +49,22 @@ class MainActivity : ComponentActivity() {
     private val liveLocationServiceInteractor =
         object : LiveLocationServiceInteractorAbs() {
             override val context: Context = this@MainActivity
-            override val samplingRate: Long = 20000
+
+            override val gpsConfig: GPSConfig =
+                object : GPSConfig {
+                    override val samplingRate: Long = 10000
+                }
+
+            override val notificationConfig: NotificationConfig =
+                object : NotificationConfig {
+                    override val foregroundServiceID: Int = 1003
+                    override val notificationChannelID: String = CHANNEL_ID
+                    override val notificationChannelName: String = CHANNEL_NAME
+                    override val notificationChannelDescription: String = CHANNEL_DESCRIPTION
+                    override val notificationPriority: Int = NotificationCompat.PRIORITY_DEFAULT
+                    override val iconRes: Int? = null
+                }
+
             override val networkConfiguration: LiveLocationNetworkConfiguration =
                 object : LiveLocationNetworkConfiguration {
                     override val url: String = "http://websocket.anakpintarstudio.com?id=terserah_mau_diisi_apa"
@@ -199,12 +214,8 @@ fun Sender(
                 Button(
                     onClick = {
                         interactor.startService(
-                            foregroundServiceID = 1003,
                             notificationTitle = "Live Location",
-                            notificationMessage = "Singularity Live Location",
-                            notificationChannelID = CHANNEL_ID,
-                            notificationChannelName = CHANNEL_NAME,
-                            notificationChannelDescription = CHANNEL_DESCRIPTION
+                            notificationMessage = "Singularity Live Location"
                         )
                     },
                     modifier = Modifier.weight(1f),

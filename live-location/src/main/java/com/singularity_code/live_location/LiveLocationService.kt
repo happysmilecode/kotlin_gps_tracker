@@ -15,6 +15,7 @@ import android.os.Build
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
+import androidx.annotation.DrawableRes
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.*
@@ -49,7 +50,8 @@ class LiveLocationService : Service() {
             notificationMessage: String,
             gpsSamplingRate: Long,
             networkConfiguration: LiveLocationNetworkConfiguration,
-            notificationPriority: Int
+            notificationPriority: Int,
+            @DrawableRes iconRes: Int?
         ): Intent {
             return Intent(
                 context,
@@ -66,6 +68,7 @@ class LiveLocationService : Service() {
                 putExtra("url", networkConfiguration.url)
                 putExtra("headers", Gson().toJson(networkConfiguration.headers))
                 putExtra("networkMethod", networkConfiguration.networkMethod.ordinal)
+                putExtra("iconRes", iconRes ?: com.google.android.material.R.drawable.m3_password_eye)
             }
         }
     }
@@ -151,6 +154,9 @@ class LiveLocationService : Service() {
     private lateinit var headers: HashMap<String, String>
     private lateinit var networkMethod: NetworkMethod
     private var gpsSamplingRate: Long = 5000
+
+    @DrawableRes
+    private var iconRes: Int? = null
     private var lastIntent: Intent? = null
 
     private fun startLocationService(
@@ -166,6 +172,8 @@ class LiveLocationService : Service() {
         notificationMessage = intent?.getStringExtra("notificationMessage") ?: "notificationMessage"
         notificationPriority = intent?.getIntExtra("notificationPriority", NotificationCompat.PRIORITY_DEFAULT)
             ?: NotificationCompat.PRIORITY_DEFAULT
+        iconRes = intent?.getIntExtra("iconResource", com.google.android.material.R.drawable.m3_password_eye)
+            ?: com.google.android.material.R.drawable.m3_password_eye
         gpsSamplingRate = intent?.getLongExtra("gpsSamplingRate", 5000L) ?: 5000L
         url = intent?.getStringExtra("url") ?: ""
         headers = (intent?.getStringExtra("headers") ?: "")
@@ -207,11 +215,15 @@ class LiveLocationService : Service() {
                 )
 
                 val notification = builder
-                    .setContentTitle(notificationTitle)
-                    .setContentText(notificationMessage)
-                    .setSmallIcon(androidx.appcompat.R.drawable.abc_ic_clear_material)
-                    .setPriority(notificationPriority)
-                    .setSound(null)
+                    .apply {
+                        setContentTitle(notificationTitle)
+                        setContentText(notificationMessage)
+                        priority = notificationPriority
+                        if (iconRes != null) {
+                            setSmallIcon(iconRes!!)
+                        }
+                        setSound(null)
+                    }
                     .build()
 
                 startForeground(

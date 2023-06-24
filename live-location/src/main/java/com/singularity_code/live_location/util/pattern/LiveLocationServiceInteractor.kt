@@ -1,8 +1,22 @@
 package com.singularity_code.live_location.util.pattern
 
 import android.content.Context
+import androidx.annotation.DrawableRes
 import androidx.annotation.MainThread
-import androidx.core.app.NotificationCompat
+
+interface NotificationConfig {
+    val foregroundServiceID: Int
+    val notificationChannelID: String
+    val notificationChannelName: String
+    val notificationChannelDescription: String
+    val notificationPriority: Int
+    @get:DrawableRes
+    val iconRes: Int?
+}
+
+interface GPSConfig {
+    val samplingRate: Long
+}
 
 interface LiveLocationServiceInteractor {
     enum class ServiceStatus {
@@ -11,19 +25,15 @@ interface LiveLocationServiceInteractor {
 
     val context: Context
 
-    /** GPS Sampling rate in millisecond **/
-    val samplingRate: Long
+    val gpsConfig: GPSConfig
+
+    val notificationConfig: NotificationConfig
 
     val networkConfiguration: LiveLocationNetworkConfiguration
 
     fun startService(
-        foregroundServiceID: Int = 1003,
         notificationTitle: String,
         notificationMessage: String,
-        notificationChannelID: String,
-        notificationChannelName: String,
-        notificationChannelDescription: String,
-        notificationPriority: Int = NotificationCompat.PRIORITY_DEFAULT
     )
 
     fun stopService()
@@ -31,12 +41,12 @@ interface LiveLocationServiceInteractor {
     @MainThread
     fun onServiceStatusChanged(
         serviceStatus: ServiceStatus
-    )
+    ) {}
 
     @MainThread
     fun onError(
         message: String?
-    )
+    ) {}
 
     @MainThread
     fun onReceiveUpdate(
@@ -44,5 +54,5 @@ interface LiveLocationServiceInteractor {
         longitude: Double,
         accuracy: Float,
         updateTime: Long
-    )
+    ) {}
 }

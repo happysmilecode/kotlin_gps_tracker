@@ -12,13 +12,6 @@ import kotlinx.coroutines.launch
 
 abstract class LiveLocationServiceInteractorAbs : LiveLocationServiceInteractor {
 
-    abstract override val context: Context
-
-    /** GPS Sampling rate in millisecond **/
-    abstract override val samplingRate: Long
-
-    abstract override val networkConfiguration: LiveLocationNetworkConfiguration
-
     private var binder: LiveLocationService.LocalBinder? = null
     private val coroutineJobs = arrayListOf<Job>()
 
@@ -79,27 +72,23 @@ abstract class LiveLocationServiceInteractorAbs : LiveLocationServiceInteractor 
     }
 
     override fun startService(
-        foregroundServiceID: Int,
         notificationTitle: String,
         notificationMessage: String,
-        notificationChannelID: String,
-        notificationChannelName: String,
-        notificationChannelDescription: String,
-        notificationPriority: Int,
     ) {
 
         context.bindService(
             LiveLocationService.createIntent(
                 context = context,
-                foregroundServiceID = foregroundServiceID,
-                notificationChannelID = notificationChannelID,
-                notificationChannelName = notificationChannelName,
-                notificationChannelDescription = notificationChannelDescription,
+                foregroundServiceID = notificationConfig.foregroundServiceID,
+                notificationChannelID = notificationConfig.notificationChannelID,
+                notificationChannelName = notificationConfig.notificationChannelName,
+                notificationChannelDescription = notificationConfig.notificationChannelDescription,
+                iconRes = notificationConfig.iconRes,
                 notificationTitle = notificationTitle,
                 notificationMessage = notificationMessage,
-                gpsSamplingRate = samplingRate,
-                notificationPriority = notificationPriority,
-                networkConfiguration = this.networkConfiguration
+                gpsSamplingRate = gpsConfig.samplingRate,
+                notificationPriority = notificationConfig.notificationPriority,
+                networkConfiguration = this.networkConfiguration,
             ),
             serviceConnection,
             Context.BIND_AUTO_CREATE
