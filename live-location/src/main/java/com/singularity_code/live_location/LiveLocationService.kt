@@ -261,10 +261,6 @@ class LiveLocationService : Service() {
 
     }
 
-    private fun restartLocationService() {
-        startLocationService(lastIntent)
-    }
-
     private fun stopLocationService() {
 
         /** destroy notification **/
@@ -304,7 +300,6 @@ class LiveLocationService : Service() {
         val liveLocationRunning = this@LiveLocationService.liveLocationRunning
         val isGPSEnabled: Boolean get() = this@LiveLocationService.isGPSEnabled
 
-        fun restartLocationService() = this@LiveLocationService.restartLocationService()
     }
 
     private fun createNotificationChannel() {
