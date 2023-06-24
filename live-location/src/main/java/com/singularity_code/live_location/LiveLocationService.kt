@@ -347,8 +347,6 @@ class LiveLocationService : Service() {
         runCatching {
             stopLocationService()
         }
-        /** kill this service **/
-        stopSelf()
         return super.onUnbind(intent)
     }
 

@@ -116,8 +116,5 @@ abstract class LiveLocationServiceInteractorAbs : LiveLocationServiceInteractor 
                 serviceConnection
             )
         }
-        onServiceStatusChanged(
-            LiveLocationServiceInteractor.ServiceStatus.DEAD
-        )
     }
 }
