@@ -1,10 +1,11 @@
 package com.singularity_code.gpstracker.activity
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
@@ -13,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
@@ -30,17 +30,9 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
 
     companion object {
-        const val LOCATION_PERMISSION_REQUEST_CODE = 100
+        const val FOREGROUND_LOCATION_PERMISSION_REQUEST_CODE = 100
+        const val BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE = 101
     }
-
-    /*private val liveLocationServiceBinder: Flow<LiveLocationService.LocalBinder?>
-            by getLiveLocationServiceBinder(
-                channelID = CHANNEL_ID,
-                channelName = CHANNEL_NAME,
-                channelDescription = CHANNEL_DESCRIPTION,
-                lifecycleOwner = this,
-                coroutineScope = lifecycleScope
-            )*/
 
     private val location = MutableStateFlow<LatLng?>(null)
     private val liveLocationRunning = MutableStateFlow(false)
@@ -68,7 +60,7 @@ class MainActivity : ComponentActivity() {
             override val networkConfiguration: LiveLocationNetworkConfiguration =
                 object : LiveLocationNetworkConfiguration {
                     override val url: String = "http://websocket.anakpintarstudio.com?id=${Math.random() * 1000}"
-                    override val networkMethod: NetworkMethod = NetworkMethod.RESTFULL
+                    override val networkMethod: NetworkMethod = NetworkMethod.WEBSOCKET
                     override val headers: HashMap<String, String> = hashMapOf(
                         "Header1" to "Bearer aasdasdadadadaa",
                         "Header2" to "Bearer 23423094029u40932"
@@ -119,37 +111,26 @@ class MainActivity : ComponentActivity() {
 
         }
 
+
+    private fun checkPermission(
+        permissions: List<String>
+    ): Boolean {
+        return permissions.map { permission ->
+            ContextCompat.checkSelfPermission(
+                this,
+                permission
+            ) == PackageManager.PERMISSION_GRANTED
+        }.fold(true) { l, r ->
+            l && r
+        }
+    }
+
+    @SuppressLint("InlinedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) != PackageManager.PERMISSION_GRANTED
-
-        if (
-            ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // Permission is not granted
-            // Request the permission
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION,
-                    Manifest.permission.ACCESS_BACKGROUND_LOCATION,
-                    Manifest.permission.FOREGROUND_SERVICE
-                ),
-
-                LOCATION_PERMISSION_REQUEST_CODE
-            )
-        } else {
-            // Permission is already granted
-            // Proceed with your desired functionality
-        }
+        /** Request Permission **/
+        requestForegroundPermission()
 
         setContent {
             GPSTrackerTheme {
@@ -174,6 +155,73 @@ class MainActivity : ComponentActivity() {
                         Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
+            }
+        }
+    }
+
+    private fun requestForegroundPermission() {
+        val hasPermission = checkPermission(
+            listOf(
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+        )
+
+        if (!hasPermission) {
+            // Permission is not granted
+            // Request the permission
+            requestPermissions(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.FOREGROUND_SERVICE
+                ),
+
+                FOREGROUND_LOCATION_PERMISSION_REQUEST_CODE
+            )
+        }
+    }
+
+    @SuppressLint("InlinedApi")
+    private fun requestBackgroundPermission() {
+        if (!checkPermission(
+                listOf(
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        ) {
+            requestPermissions(
+                arrayOf(
+                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                ),
+
+                BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE
+            )
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if(grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(
+                this,
+                "Location tracker wont work, please re open application and grant all permissions",
+                Toast.LENGTH_LONG
+            ).show()
+
+            return
+        }
+
+        when (requestCode) {
+            FOREGROUND_LOCATION_PERMISSION_REQUEST_CODE -> {
+                /** request background permission **/
+                requestBackgroundPermission()
             }
         }
     }
