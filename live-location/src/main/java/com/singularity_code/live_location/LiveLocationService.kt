@@ -68,7 +68,7 @@ class LiveLocationService : Service() {
                 putExtra("url", networkConfiguration.url)
                 putExtra("headers", Gson().toJson(networkConfiguration.headers))
                 putExtra("networkMethod", networkConfiguration.networkMethod.ordinal)
-                putExtra("iconRes", iconRes ?: com.google.android.material.R.drawable.m3_password_eye)
+                putExtra("iconRes", iconRes ?: R.drawable.ic_share_location)
             }
         }
     }
@@ -172,8 +172,8 @@ class LiveLocationService : Service() {
         notificationMessage = intent?.getStringExtra("notificationMessage") ?: "notificationMessage"
         notificationPriority = intent?.getIntExtra("notificationPriority", NotificationCompat.PRIORITY_DEFAULT)
             ?: NotificationCompat.PRIORITY_DEFAULT
-        iconRes = intent?.getIntExtra("iconResource", com.google.android.material.R.drawable.m3_password_eye)
-            ?: com.google.android.material.R.drawable.m3_password_eye
+        iconRes = intent?.getIntExtra("iconResource", R.drawable.ic_share_location)
+            ?: R.drawable.ic_share_location
         gpsSamplingRate = intent?.getLongExtra("gpsSamplingRate", 5000L) ?: 5000L
         url = intent?.getStringExtra("url") ?: ""
         headers = (intent?.getStringExtra("headers") ?: "")
