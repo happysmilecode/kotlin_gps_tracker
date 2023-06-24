@@ -4,20 +4,6 @@ import android.content.Context
 import androidx.annotation.DrawableRes
 import androidx.annotation.MainThread
 
-interface NotificationConfig {
-    val foregroundServiceID: Int
-    val notificationChannelID: String
-    val notificationChannelName: String
-    val notificationChannelDescription: String
-    val notificationPriority: Int
-    @get:DrawableRes
-    val iconRes: Int?
-}
-
-interface GPSConfig {
-    val samplingRate: Long
-}
-
 interface LiveLocationServiceInteractor {
     enum class ServiceStatus {
         RUNNING, DEAD

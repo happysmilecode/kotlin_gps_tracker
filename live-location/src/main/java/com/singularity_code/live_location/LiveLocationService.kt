@@ -36,6 +36,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.io.File
+import java.io.FileDescriptor
 
 class LiveLocationService : Service() {
 
@@ -51,7 +52,8 @@ class LiveLocationService : Service() {
             gpsSamplingRate: Long,
             networkConfiguration: LiveLocationNetworkConfiguration,
             notificationPriority: Int,
-            @DrawableRes iconRes: Int?
+            @DrawableRes iconRes: Int?,
+            messageDescriptor: String
         ): Intent {
             return Intent(
                 context,
@@ -69,6 +71,7 @@ class LiveLocationService : Service() {
                 putExtra("headers", Gson().toJson(networkConfiguration.headers))
                 putExtra("networkMethod", networkConfiguration.networkMethod.ordinal)
                 putExtra("iconRes", iconRes ?: R.drawable.ic_share_location)
+                putExtra("messageDescriptor", messageDescriptor)
             }
         }
     }
@@ -102,7 +105,7 @@ class LiveLocationService : Service() {
                 coroutineScope.launch {
                     val updateTime = System.currentTimeMillis()
 
-                    val payload = hashMapOf(
+                    val data = hashMapOf(
                         "latitude" to lastLocation.latitude,
                         "longitude" to lastLocation.longitude,
                         "accuracy" to lastLocation.accuracy,
@@ -110,6 +113,18 @@ class LiveLocationService : Service() {
                     ).let {
                         Gson().toJson(it)
                     }
+
+                    val payload = hashMapOf<String, String>()
+                        .apply {
+                            if (messageDescriptor != null && messageDescriptor?.isNotBlank() == true) {
+                                put("descriptor", messageDescriptor!!)
+                            }
+
+                            put("data", data)
+                        }
+                        .let {
+                            Gson().toJson(it)
+                        }
 
                     repository.sendData(payload)
                         .mapLeft {
@@ -154,6 +169,7 @@ class LiveLocationService : Service() {
     private lateinit var headers: HashMap<String, String>
     private lateinit var networkMethod: NetworkMethod
     private var gpsSamplingRate: Long = 5000
+    private var messageDescriptor: String? = null
 
     @DrawableRes
     private var iconRes: Int? = null
@@ -184,6 +200,8 @@ class LiveLocationService : Service() {
             }
         networkMethod = (intent?.getIntExtra("networkMethod", 0) ?: 0)
             .let { ordinal -> NetworkMethod.values()[ordinal] }
+
+        messageDescriptor = intent?.getStringExtra("messageDescriptor")
 
         coroutineScope.launch {
 

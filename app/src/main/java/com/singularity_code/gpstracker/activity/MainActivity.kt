@@ -18,6 +18,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.model.LatLng
+import com.google.gson.Gson
 import com.singularity_code.gpstracker.ui.theme.GPSTrackerTheme
 import com.singularity_code.gpstracker.util.CHANNEL_DESCRIPTION
 import com.singularity_code.gpstracker.util.CHANNEL_ID
@@ -26,6 +27,7 @@ import com.singularity_code.live_location.util.enums.NetworkMethod
 import com.singularity_code.live_location.util.pattern.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import java.lang.StringBuilder
 
 class MainActivity : ComponentActivity() {
 
@@ -33,6 +35,9 @@ class MainActivity : ComponentActivity() {
         const val FOREGROUND_LOCATION_PERMISSION_REQUEST_CODE = 100
         const val BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE = 101
     }
+
+    private val userID by lazy { Math.random() * 100000 }
+    private val messagingToken by lazy { "Dummy Messaging Token" }
 
     private val location = MutableStateFlow<LatLng?>(null)
     private val liveLocationRunning = MutableStateFlow(false)
@@ -65,6 +70,14 @@ class MainActivity : ComponentActivity() {
                         "Header1" to "Bearer aasdasdadadadaa",
                         "Header2" to "Bearer 23423094029u40932"
                     )
+                    override val messageDescriptor: String by lazy {
+                        val desc = hashMapOf<String, String>(
+                            "userID" to userID.toString(),
+                            "messagingToken" to messagingToken
+                        )
+
+                        Gson().toJson(desc)
+                    }
                 }
 
             override fun onServiceStatusChanged(
@@ -208,7 +221,7 @@ class MainActivity : ComponentActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        if(grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+        if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(
                 this,
                 "Location tracker wont work, please re open application and grant all permissions",

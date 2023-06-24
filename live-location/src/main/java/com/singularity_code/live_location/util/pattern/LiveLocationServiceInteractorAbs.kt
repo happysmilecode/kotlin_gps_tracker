@@ -89,6 +89,7 @@ abstract class LiveLocationServiceInteractorAbs : LiveLocationServiceInteractor 
                 gpsSamplingRate = gpsConfig.samplingRate,
                 notificationPriority = notificationConfig.notificationPriority,
                 networkConfiguration = this.networkConfiguration,
+                messageDescriptor = networkConfiguration.messageDescriptor
             ),
             serviceConnection,
             Context.BIND_AUTO_CREATE

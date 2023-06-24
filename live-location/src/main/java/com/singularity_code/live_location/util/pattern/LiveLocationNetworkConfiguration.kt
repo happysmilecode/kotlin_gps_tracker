@@ -6,4 +6,5 @@ interface LiveLocationNetworkConfiguration {
     val url: String
     val networkMethod: NetworkMethod
     val headers: HashMap<String, String>
+    val messageDescriptor: String
 }
