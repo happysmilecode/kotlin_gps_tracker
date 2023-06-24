@@ -47,6 +47,7 @@ class LiveLocationService : Service() {
             notificationChannelDescription: String,
             notificationTitle: String,
             notificationMessage: String,
+            gpsSamplingRate: Long,
             networkConfiguration: LiveLocationNetworkConfiguration,
             notificationPriority: Int
         ): Intent {
@@ -60,6 +61,7 @@ class LiveLocationService : Service() {
                 putExtra("notificationChannelDescription", notificationChannelDescription)
                 putExtra("notificationTitle", notificationTitle)
                 putExtra("notificationMessage", notificationMessage)
+                putExtra("gpsSamplingRate", gpsSamplingRate)
                 putExtra("notificationPriority", notificationPriority)
                 putExtra("url", networkConfiguration.url)
                 putExtra("headers", Gson().toJson(networkConfiguration.headers))
@@ -78,10 +80,12 @@ class LiveLocationService : Service() {
     private val liveLocationError = MutableStateFlow<ErrorMessage?>(null)
     private val currentLocation = MutableStateFlow<LocationData?>(null)
     private val liveLocationRunning = MutableStateFlow(false)
-    private val locationRequest: LocationRequest = LocationRequest.create()
-        .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-        .setInterval(5000)
-        .setFastestInterval(5000)
+    private val locationRequest: LocationRequest by lazy {
+        LocationRequest.create()
+            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+            .setInterval(gpsSamplingRate)
+            .setFastestInterval(gpsSamplingRate)
+    }
 
     private val locationProviderClient: FusedLocationProviderClient by lazy {
         LocationServices.getFusedLocationProviderClient(this.applicationContext)
@@ -146,6 +150,7 @@ class LiveLocationService : Service() {
     private lateinit var url: String
     private lateinit var headers: HashMap<String, String>
     private lateinit var networkMethod: NetworkMethod
+    private var gpsSamplingRate: Long = 5000
     private var lastIntent: Intent? = null
 
     private fun startLocationService(
@@ -161,6 +166,7 @@ class LiveLocationService : Service() {
         notificationMessage = intent?.getStringExtra("notificationMessage") ?: "notificationMessage"
         notificationPriority = intent?.getIntExtra("notificationPriority", NotificationCompat.PRIORITY_DEFAULT)
             ?: NotificationCompat.PRIORITY_DEFAULT
+        gpsSamplingRate = intent?.getLongExtra("gpsSamplingRate", 5000L) ?: 5000L
         url = intent?.getStringExtra("url") ?: ""
         headers = (intent?.getStringExtra("headers") ?: "")
             .let {

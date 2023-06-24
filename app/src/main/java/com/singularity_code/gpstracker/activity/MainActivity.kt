@@ -49,7 +49,7 @@ class MainActivity : ComponentActivity() {
     private val liveLocationServiceInteractor =
         object : LiveLocationServiceInteractorAbs() {
             override val context: Context = this@MainActivity
-            override val samplingRate: Long = 5000
+            override val samplingRate: Long = 20000
             override val networkConfiguration: LiveLocationNetworkConfiguration =
                 object : LiveLocationNetworkConfiguration {
                     override val url: String = "http://websocket.anakpintarstudio.com?id=terserah_mau_diisi_apa"

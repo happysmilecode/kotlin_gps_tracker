@@ -101,6 +101,7 @@ abstract class LiveLocationServiceInteractorAbs : LiveLocationServiceInteractor 
                 notificationChannelDescription = notificationChannelDescription,
                 notificationTitle = notificationTitle,
                 notificationMessage = notificationMessage,
+                gpsSamplingRate = samplingRate,
                 notificationPriority = notificationPriority,
                 networkConfiguration = this.networkConfiguration
             ),
