@@ -37,6 +37,15 @@ private val liveLocationServiceInteractor =
                         "Header1" to "Bearer aasdasdadadadaa",
                         "Header2" to "Bearer 23423094029u40932"
                     )
+                    /** Add descriptor to your message **/
+                    override val messageDescriptor: String by lazy {
+                        val desc = hashMapOf<String, String>(
+                            "userID" to userID.toString(),
+                            "messagingToken" to messagingToken
+                        )
+
+                        Gson().toJson(desc)
+                    }
                 }
 
             /** Bellows are the interfaces you can use to get respond in realtime to your application **/
