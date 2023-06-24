@@ -105,6 +105,11 @@ You need to request all these permission in order to make it works:
 <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 <uses-permission android:name="android.permission.INTERNET" />
 ```
+# Important :
+Android not allowing you to request background location before you've granted foreground location.
+So the permission request should be done in 2 steps:
+- First step is request all foreground permissions
+- Second step, after foreground permission granted, you should ask for background permission.
 
 ## Note :
 - You will need context such activity context or application context both are fine.
