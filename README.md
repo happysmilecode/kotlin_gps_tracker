@@ -1,4 +1,25 @@
 # Background Location Service
+
+## Dependency Setting
+
+Add it in your root build.gradle at the end of repositories:
+```groovy
+allprojects {
+        repositories {
+                ...
+                maven { url 'https://jitpack.io' }
+        }
+}
+```
+
+Add the dependency
+```groovy
+dependencies {
+        implementation 'com.github.SingularityIndonesia:ForegroundGPSTracker:1.0.0'
+}
+```
+
+
 ## Setting Up
 ```kotlin
 /** ## First you will need to create service interactor object,
