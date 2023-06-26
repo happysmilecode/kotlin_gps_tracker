@@ -50,7 +50,7 @@ private val liveLocationServiceInteractor =
             /** Network Configuration Block **/
             override val networkConfiguration: LiveLocationNetworkConfiguration =
                 object : LiveLocationNetworkConfiguration {
-                    override val url: String = "http://websocket.anakpintarstudio.com?id=terserah_mau_diisi_apa"
+                    override val url: String = "http://websocket.company.com"
                     /** You can define whether using Socket Communication or RESTFUL Api **/ 
                     override val networkMethod: NetworkMethod = NetworkMethod.RESTFULL
                     /** You can put static payload such athorizations and other header what ever you needed **/
@@ -176,7 +176,7 @@ private LiveLocationServiceInteractor liveLocationServiceInteractor = new LiveLo
         return new LiveLocationNetworkConfiguration() {
             @Override
             public String getUrl() {
-                return "http://websocket.anakpintarstudio.com?id=" + userID;
+                return "http://websocket.company.com;
             }
 
             @Override
