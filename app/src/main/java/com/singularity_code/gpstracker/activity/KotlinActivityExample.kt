@@ -27,7 +27,6 @@ import com.singularity_code.live_location.util.enums.NetworkMethod
 import com.singularity_code.live_location.util.pattern.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import java.lang.StringBuilder
 
 class MainActivity : ComponentActivity() {
 
