@@ -127,3 +127,5 @@ So the permission request should be done in 2 steps:
 ## Design and Developed by :
 - [Stefanus Ayudha](https://github.com/stefanusayudha)
 - [Singularity Indonesia](https://github.com/SingularityIndonesia)
+
+<img src="https://raw.githubusercontent.com/SingularityIndonesia/SingularityIndonesia/main/Logo%20Of%20Singularity%20Indonesia%20%C2%A92023%20Stefanus%20Ayudha.png" width="64" alt="Singularity Indonesia">
