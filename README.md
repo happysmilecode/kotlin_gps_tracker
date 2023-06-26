@@ -248,6 +248,8 @@ So the permission request should be done in 2 steps:
 - The service will push the data for you, A.k.a automatic network syncronization. All you need are just setting up the network configuration.
 - You can use java or kotlin, the syntax won't have a lot different, you can contact me for more help.
 
+## Build AAR Libray
+To build the library just run the `build-library.sh` in the project root directory.
 
 ## Design and Developed by :
 - [Stefanus Ayudha](https://github.com/stefanusayudha)
