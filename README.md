@@ -98,10 +98,8 @@ private val liveLocationServiceInteractor =
 This library will automatically sync your data to network, the body request will be
 ```json
 {
-  "accuracy": 31.717,
-  "updateTime": 1687566473527,
-  "latitude": 37.29547,
-  "longitude": -121.1872217
+  "data": "{\"accuracy\":17.72,\"updateTime\":1687750809224,\"latitude\":-6.8729337,\"longitude\":107.587445}",
+  "descriptor": "{\"userID\":\"85158.72113324582\",\"messagingToken\":\"Dummy Messaging Token\"}"
 }
 ```
 
