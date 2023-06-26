@@ -81,7 +81,7 @@ public class JavaActivityExample extends Activity {
             return new LiveLocationNetworkConfiguration() {
                 @Override
                 public String getUrl() {
-                    return "http://websocket.anakpintarstudio.com?id=" + userID;
+                    return "http://websocket.company.com?id=" + userID;
                 }
 
                 @Override

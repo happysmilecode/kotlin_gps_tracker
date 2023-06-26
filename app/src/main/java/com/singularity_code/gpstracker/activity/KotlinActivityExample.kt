@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity() {
 
             override val networkConfiguration: LiveLocationNetworkConfiguration =
                 object : LiveLocationNetworkConfiguration {
-                    override val url: String = "http://websocket.anakpintarstudio.com?id=${Math.random() * 1000}"
+                    override val url: String = "http://websocket.company.com?id=${Math.random() * 1000}"
                     override val networkMethod: NetworkMethod = NetworkMethod.WEBSOCKET
                     override val headers: HashMap<String, String> = hashMapOf(
                         "Header1" to "Bearer aasdasdadadadaa",
