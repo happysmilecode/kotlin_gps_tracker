@@ -7,6 +7,7 @@ You can see the example here [JavaAlienActivity](..%2Fapp%2Fsrc%2Fmain%2Fjava%2F
 # 1. Get Instance
 You can get the instance this way:
 ```java
+// from package com.singularity_code.live_location.util.other.AlienPortal
 private final AlienPortal alienPortal = AlienPortal.INSTANCE;
 ```
 
