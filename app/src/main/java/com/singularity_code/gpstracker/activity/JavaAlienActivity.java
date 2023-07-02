@@ -2,6 +2,7 @@ package com.singularity_code.gpstracker.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -50,6 +51,8 @@ public class JavaAlienActivity extends Activity {
         );
 
         portal.start();
+
+        Toast.makeText(this, "Live location is running in foreground service, check your notification.", Toast.LENGTH_LONG).show();
     }
 
     @Override
