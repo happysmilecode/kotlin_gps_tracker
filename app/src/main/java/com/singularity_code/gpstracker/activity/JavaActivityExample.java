@@ -7,6 +7,8 @@ import static com.singularity_code.gpstracker.util.ConstKt.CHANNEL_NAME;
 import android.app.Activity;
 import android.content.Context;
 
+import android.os.Bundle;
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.google.gson.Gson;
@@ -221,4 +223,19 @@ public class JavaActivityExample extends Activity {
             // TODO : Do what you need
         }
     };
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        liveLocationServiceInteractor.startService(
+                "Live Location",
+                "Singularity Live Location"
+        );
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        liveLocationServiceInteractor.stopService();
+    }
 }
