@@ -14,7 +14,6 @@ public class JavaAlienActivity extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         startLiveLocationService();
     }
 
@@ -22,6 +21,18 @@ public class JavaAlienActivity extends Activity {
     protected void onResume() {
         super.onResume();
         observeUpdate();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopObservingUpdate();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        portal.stop();
     }
 
     private final AlienPortal portal = AlienPortal.INSTANCE;
@@ -63,6 +74,8 @@ public class JavaAlienActivity extends Activity {
         Toast.makeText(this, "Live location is running in foreground service, check your notification.", Toast.LENGTH_LONG).show();
     }
 
+
+    /** # Observer **/
     private Thread observerThread;
 
     private boolean stopDebug = false;
@@ -114,19 +127,5 @@ public class JavaAlienActivity extends Activity {
         }catch (Throwable e) {
             // nothing to do
         }
-    }
-
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        stopObservingUpdate();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        portal.stop();
     }
 }
