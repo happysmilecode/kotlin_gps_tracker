@@ -21,6 +21,22 @@ import kotlinx.coroutines.launch
 @SuppressLint("StaticFieldLeak")
 object AlienPortal {
 
+    // observable
+    private var _status: String = "DEAD"
+    val status get() = _status
+
+    private var _errorMessage: String? = null
+    val errorMessage get() = _errorMessage
+
+    private var _latitude: String? = null
+    val latitude: String? get() = _latitude
+    private var _longitude: String? = null
+    val longitude: String? get() = _longitude
+    private var _accuracy: String? = null
+    val accuracy: String? get() = _accuracy
+    private var _updatedTime: String? = null
+    val updatedTime: String? get() = _updatedTime
+
     // gps config
     private var gpsSamplingRate = 10000L
 
@@ -129,7 +145,7 @@ object AlienPortal {
                 serviceStatus: LiveLocationServiceInteractor.ServiceStatus
             ) {
                 coroutine.launch {
-                    // Callback is not yet supported
+                    this@AlienPortal._status = serviceStatus.name
                 }
             }
 
@@ -137,7 +153,7 @@ object AlienPortal {
                 message: String?
             ) {
                 coroutine.launch {
-                    // Callback is not yet supported
+                    this@AlienPortal._errorMessage = message
                 }
             }
 
@@ -148,7 +164,10 @@ object AlienPortal {
                 updateTime: Long
             ) {
                 coroutine.launch {
-                    // Callback is not yet supported
+                    this@AlienPortal._latitude = latitude.toString()
+                    this@AlienPortal._longitude = longitude.toString()
+                    this@AlienPortal._accuracy = accuracy.toString()
+                    this@AlienPortal._updatedTime = updateTime.toString()
                 }
             }
 

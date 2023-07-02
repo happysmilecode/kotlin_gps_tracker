@@ -2,6 +2,7 @@ package com.singularity_code.gpstracker.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -15,9 +16,11 @@ public class JavaAlienActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         startLiveLocationService();
+        observeUpdate();
     }
 
     private final AlienPortal portal = AlienPortal.INSTANCE;
+
     private void startLiveLocationService() {
 
         portal.setGPSSamplingRate(1000L);
@@ -45,7 +48,7 @@ public class JavaAlienActivity extends Activity {
         portal.addHeader("Authentication", "Bearer alsdkmlam");
 
         portal.setMessageDescriptor(
-                "You can parse anything here to describe your message. "+
+                "You can parse anything here to describe your message. " +
                         "For example sender user id, and user name, and anything, " +
                         "in formats that you can decode."
         );
@@ -55,9 +58,51 @@ public class JavaAlienActivity extends Activity {
         Toast.makeText(this, "Live location is running in foreground service, check your notification.", Toast.LENGTH_LONG).show();
     }
 
+    private Thread observerThread = null;
+
+    private void observeUpdate() {
+        observerThread = new Thread() {
+            @Override
+            public void run() {
+
+                StringBuilder sb;
+
+                while (true) {
+
+                    String status = portal.getStatus();
+                    String latitude = portal.getLatitude();
+                    String longitude = portal.getLongitude();
+                    String accuracy = portal.getAccuracy();
+                    String updatedTime = portal.getUpdatedTime();
+
+                    sb = new StringBuilder();
+                    sb.append("status : ").append(status).append("\n");
+                    sb.append("latitude : ").append(latitude).append("\n");
+                    sb.append("longitude : ").append(longitude).append("\n");
+                    sb.append("accuracy : ").append(accuracy).append("\n");
+                    sb.append("updatedTime : ").append(updatedTime).append("\n");
+
+                    Log.d("LiveLocation", "Current: " + sb);
+
+                    try {
+                        Thread.sleep(1000L);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        };
+
+        observerThread.start();
+
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        observerThread.stop();
+        observerThread.destroy();
         portal.stop();
     }
 }
