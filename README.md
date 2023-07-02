@@ -21,203 +21,15 @@ dependencies {
 
 
 ## Setting Up in Kotlin
-```kotlin
-/** ## First you will need to create service interactor object,
- *  as a proxy for Live Location services **/
-private val liveLocationServiceInteractor =
-        object : LiveLocationServiceInteractorAbs() {
-            
-            /** Define Your Context **/
-            override val context: Context = this@MainActivity
-
-            /** GPS Configuration Block **/
-            override val gpsConfig: GPSConfig =
-                object : GPSConfig {
-                    override val samplingRate: Long = 10000
-                }
-
-            /** Notification Configuration Block **/
-            override val notificationConfig: NotificationConfig =
-                object : NotificationConfig {
-                    override val foregroundServiceID: Int = 1003
-                    override val notificationChannelID: String = CHANNEL_ID
-                    override val notificationChannelName: String = CHANNEL_NAME
-                    override val notificationChannelDescription: String = CHANNEL_DESCRIPTION
-                    override val notificationPriority: Int = NotificationCompat.PRIORITY_DEFAULT
-                    override val iconRes: Int? = null
-                }
-
-            /** Network Configuration Block **/
-            override val networkConfiguration: LiveLocationNetworkConfiguration =
-                object : LiveLocationNetworkConfiguration {
-                    override val url: String = "http://websocket.company.com"
-                    /** You can define whether using Socket Communication or RESTFUL Api **/ 
-                    override val networkMethod: NetworkMethod = NetworkMethod.RESTFULL
-                    /** You can put static payload such athorizations and other header what ever you needed **/
-                    override val headers: HashMap<String, String> = hashMapOf(
-                        "Header1" to "Bearer aasdasdadadadaa",
-                        "Header2" to "Bearer 23423094029u40932"
-                    )
-                    /** Add descriptor to your message **/
-                    override val messageDescriptor: String by lazy {
-                        val desc = hashMapOf<String, String>(
-                            "userID" to userID.toString(),
-                            "messagingToken" to messagingToken
-                        )
-
-                        Gson().toJson(desc)
-                    }
-                }
-
-            /** Bellows are the interfaces you can use to get respond in realtime to your application **/
-            override fun onServiceStatusChanged(
-                serviceStatus: LiveLocationServiceInteractor.ServiceStatus
-            ) {
-                lifecycleScope.launch {
-                    liveLocationRunning.emit(
-                        when (serviceStatus) {
-                            LiveLocationServiceInteractor.ServiceStatus.RUNNING ->
-                                true
-
-                            LiveLocationServiceInteractor.ServiceStatus.DEAD ->
-                                false
-                        }
-                    )
-                }
-            }
-
-            override fun onError(
-                message: String?
-            ) {
-                lifecycleScope.launch {
-                    liveLocationError.emit(
-                        message
-                    )
-                }
-            }
-
-            override fun onReceiveUpdate(
-                latitude: Double,
-                longitude: Double,
-                accuracy: Float,
-                updateTime: Long
-            ) {
-                lifecycleScope.launch {
-                    location.emit(
-                        LatLng(
-                            latitude,
-                            longitude
-                        )
-                    )
-                }
-            }
-
-        }
-```
+See [SetupKotlin.md](docs%2FSetupKotlin.md).
 
 ## Setting Up in Java
-```java
-private String userID = "USER ID";
-private String messagingToken = "Dummy Messaging Token";
+See [SetupJava.md](docs%2FSetupJava.md).
 
-private LiveLocationServiceInteractor liveLocationServiceInteractor = new LiveLocationServiceInteractorAbs() {
-    @Override
-    public Context getContext() {
-        return Main2Activity.this;
-    }
-
-    @Override
-    public GPSConfig getGpsConfig() {
-        return new GPSConfig() {
-            @Override
-            public long getSamplingRate() {
-                return 10000;
-            }
-        };
-    }
-
-    @Override
-    public NotificationConfig getNotificationConfig() {
-        return new NotificationConfig() {
-            @Override
-            public int getForegroundServiceID() {
-                return 1003;
-            }
-
-            @Override
-            public String getNotificationChannelID() {
-                return CHANNEL_ID;
-            }
-
-            @Override
-            public String getNotificationChannelName() {
-                return CHANNEL_NAME;
-            }
-
-            @Override
-            public String getNotificationChannelDescription() {
-                return CHANNEL_DESCRIPTION;
-            }
-
-            @Override
-            public int getNotificationPriority() {
-                return NotificationCompat.PRIORITY_DEFAULT;
-            }
-
-            @Override
-            public Integer getIconRes() {
-                return null;
-            }
-        };
-    }
-
-    @Override
-    public LiveLocationNetworkConfiguration getNetworkConfiguration() {
-        return new LiveLocationNetworkConfiguration() {
-            @Override
-            public String getUrl() {
-                return "http://websocket.company.com;
-            }
-
-            @Override
-            public NetworkMethod getNetworkMethod() {
-                return NetworkMethod.WEBSOCKET;
-            }
-
-            @Override
-            public HashMap<String, String> getHeaders() {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Header1", "Bearer aasdasdadadadaa");
-                headers.put("Header2", "Bearer 23423094029u40932");
-                return headers;
-            }
-
-            @Override
-            public String getMessageDescriptor() {
-                HashMap<String, String> desc = new HashMap<>();
-                desc.put("userID", String.valueOf(userID));
-                desc.put("messagingToken", messagingToken);
-                return new Gson().toJson(desc);
-            }
-        };
-    }
-
-    @Override
-    public void onServiceStatusChanged(LiveLocationServiceInteractor.ServiceStatus serviceStatus) {
-        // TODO : Do what you need
-    }
-
-    @Override
-    public void onError(String message) {
-        // TODO : Do what you need
-    }
-
-    @Override
-    public void onReceiveUpdate(double latitude, double longitude, float accuracy, long updateTime) {
-        // TODO : Do what you need
-    }
-};
-```
+## Setup Alien
+If you are using alien technology such Xamarin/Unity, C++ and other non java platform,
+you can create a portal interaction using AlienPortal object.
+See [SetupAlien.md](docs%2FSetupAlien.md).
 
 ## Networking
 This library will automatically sync your data to network, the body request will be
@@ -249,7 +61,7 @@ So the permission request should be done in 2 steps:
 - You can use java or kotlin, the syntax won't have a lot different, you can contact me for more help.
 
 ## Build AAR Libray
-To build the library just run the `build-library.sh` in the project root directory.
+If you need the aar file, to build the library just run the `build-library.sh` in the project root directory.
 
 ## Design and Developed by :
 - [Stefanus Ayudha](https://github.com/stefanusayudha)
