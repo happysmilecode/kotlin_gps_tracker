@@ -16,6 +16,7 @@ private void startLiveLocationService() {
 
     alienPortal.setGPSSamplingRate(1000L);
 
+    // parse your context here, such UnityActivity, Activity, or Application.
     alienPortal.setContext(this);
 
     alienPortal.setChannelId("Alien Notification");
