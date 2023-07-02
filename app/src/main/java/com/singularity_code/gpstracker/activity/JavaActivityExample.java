@@ -1,15 +1,23 @@
 package com.singularity_code.gpstracker.activity;
 
+import static com.singularity_code.gpstracker.util.ConstKt.CHANNEL_DESCRIPTION;
+import static com.singularity_code.gpstracker.util.ConstKt.CHANNEL_ID;
+import static com.singularity_code.gpstracker.util.ConstKt.CHANNEL_NAME;
+
 import android.app.Activity;
 import android.content.Context;
+
 import androidx.core.app.NotificationCompat;
+
 import com.google.gson.Gson;
 import com.singularity_code.live_location.util.enums.NetworkMethod;
-import com.singularity_code.live_location.util.pattern.*;
+import com.singularity_code.live_location.util.pattern.GPSConfig;
+import com.singularity_code.live_location.util.pattern.LiveLocationNetworkConfiguration;
+import com.singularity_code.live_location.util.pattern.LiveLocationServiceInteractor;
+import com.singularity_code.live_location.util.pattern.LiveLocationServiceInteractorAbs;
+import com.singularity_code.live_location.util.pattern.NotificationConfig;
 
 import java.util.HashMap;
-
-import static com.singularity_code.gpstracker.util.ConstKt.*;
 
 public class JavaActivityExample extends Activity {
     private String userID = "USER ID";
@@ -23,105 +31,108 @@ public class JavaActivityExample extends Activity {
 
         @Override
         public GPSConfig getGpsConfig() {
-            return new GPSConfig() {private String messagingToken = "Dummy Messaging Token";
-
-    private LiveLocationServiceInteractor liveLocationServiceInteractor = new LiveLocationServiceInteractorAbs() {
-        @Override
-        public Context getContext() {
-            return JavaActivityExample.this;
-        }
-
-        @Override
-        public GPSConfig getGpsConfig() {
             return new GPSConfig() {
-                @Override
-                public long getSamplingRate() {
-                    return 10000;
-                }
-            };
-        }
+                private String messagingToken = "Dummy Messaging Token";
 
-        @Override
-        public NotificationConfig getNotificationConfig() {
-            return new NotificationConfig() {
-                @Override
-                public int getForegroundServiceID() {
-                    return 1003;
-                }
+                private LiveLocationServiceInteractor liveLocationServiceInteractor =
+                        new LiveLocationServiceInteractorAbs() {
+                            @Override
+                            public Context getContext() {
+                                return JavaActivityExample.this;
+                            }
 
-                @Override
-                public String getNotificationChannelID() {
-                    return CHANNEL_ID;
-                }
+                            @Override
+                            public GPSConfig getGpsConfig() {
+                                return new GPSConfig() {
+                                    @Override
+                                    public long getSamplingRate() {
+                                        return 10000;
+                                    }
+                                };
+                            }
 
-                @Override
-                public String getNotificationChannelName() {
-                    return CHANNEL_NAME;
-                }
+                            @Override
+                            public NotificationConfig getNotificationConfig() {
+                                return new NotificationConfig() {
+                                    @Override
+                                    public int getForegroundServiceID() {
+                                        return 1003;
+                                    }
 
-                @Override
-                public String getNotificationChannelDescription() {
-                    return CHANNEL_DESCRIPTION;
-                }
+                                    @Override
+                                    public String getNotificationChannelID() {
+                                        return CHANNEL_ID;
+                                    }
 
-                @Override
-                public int getNotificationPriority() {
-                    return NotificationCompat.PRIORITY_DEFAULT;
-                }
+                                    @Override
+                                    public String getNotificationChannelName() {
+                                        return CHANNEL_NAME;
+                                    }
 
-                @Override
-                public Integer getIconRes() {
-                    return null;
-                }
-            };
-        }
+                                    @Override
+                                    public String getNotificationChannelDescription() {
+                                        return CHANNEL_DESCRIPTION;
+                                    }
 
-        @Override
-        public LiveLocationNetworkConfiguration getNetworkConfiguration() {
-            return new LiveLocationNetworkConfiguration() {
-                @Override
-                public String getUrl() {
-                    return "http://websocket.company.com?id=" + userID;
-                }
+                                    @Override
+                                    public int getNotificationPriority() {
+                                        return NotificationCompat.PRIORITY_DEFAULT;
+                                    }
 
-                @Override
-                public NetworkMethod getNetworkMethod() {
-                    return NetworkMethod.WEBSOCKET;
-                }
+                                    @Override
+                                    public Integer getIconRes() {
+                                        return null;
+                                    }
+                                };
+                            }
 
-                @Override
-                public HashMap<String, String> getHeaders() {
-                    HashMap<String, String> headers = new HashMap<>();
-                    headers.put("Header1", "Bearer aasdasdadadadaa");
-                    headers.put("Header2", "Bearer 23423094029u40932");
-                    return headers;
-                }
+                            @Override
+                            public LiveLocationNetworkConfiguration getNetworkConfiguration() {
+                                return new LiveLocationNetworkConfiguration() {
+                                    @Override
+                                    public String getUrl() {
+                                        return "http://websocket.company.com?id=" + userID;
+                                    }
 
-                @Override
-                public String getMessageDescriptor() {
-                    HashMap<String, String> desc = new HashMap<>();
-                    desc.put("userID", String.valueOf(userID));
-                    desc.put("messagingToken", messagingToken);
-                    return new Gson().toJson(desc);
-                }
-            };
-        }
+                                    @Override
+                                    public NetworkMethod getNetworkMethod() {
+                                        return NetworkMethod.WEBSOCKET;
+                                    }
 
-        @Override
-        public void onServiceStatusChanged(LiveLocationServiceInteractor.ServiceStatus serviceStatus) {
-            // TODO : Do what you need
-        }
+                                    @Override
+                                    public HashMap<String, String> getHeaders() {
+                                        HashMap<String, String> headers = new HashMap<>();
+                                        headers.put("Header1", "Bearer aasdasdadadadaa");
+                                        headers.put("Header2", "Bearer 23423094029u40932");
+                                        return headers;
+                                    }
 
-        @Override
-        public void onError(String message) {
-            // TODO : Do what you need
-        }
+                                    @Override
+                                    public String getMessageDescriptor() {
+                                        HashMap<String, String> desc = new HashMap<>();
+                                        desc.put("userID", String.valueOf(userID));
+                                        desc.put("messagingToken", messagingToken);
+                                        return new Gson().toJson(desc);
+                                    }
+                                };
+                            }
 
-        @Override
-        public void onReceiveUpdate(double latitude, double longitude, float accuracy, long updateTime) {
-            // TODO : Do what you need
-        }
-    };
+                            @Override
+                            public void onServiceStatusChanged(LiveLocationServiceInteractor.ServiceStatus serviceStatus) {
+                                // TODO : Do what you need
+                            }
+
+                            @Override
+                            public void onError(String message) {
+                                // TODO : Do what you need
+                            }
+
+                            @Override
+                            public void onReceiveUpdate(double latitude, double longitude, float accuracy, long updateTime) {
+                                // TODO : Do what you need
+                            }
+                        };
+
                 @Override
                 public long getSamplingRate() {
                     return 10000;
