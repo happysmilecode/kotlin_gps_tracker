@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
  * you can use this ALienPortal instance to interact with the LiveLocationService.
  */
 @SuppressLint("StaticFieldLeak")
-object AlienPortal {
+class AlienPortal {
 
     // observable
     private var _status: String = "DEAD"

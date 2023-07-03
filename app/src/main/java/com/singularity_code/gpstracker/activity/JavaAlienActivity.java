@@ -35,7 +35,7 @@ public class JavaAlienActivity extends Activity {
         portal.stop();
     }
 
-    private final AlienPortal portal = AlienPortal.INSTANCE;
+    private final AlienPortal portal = new AlienPortal();
 
     private void startLiveLocationService() {
 
