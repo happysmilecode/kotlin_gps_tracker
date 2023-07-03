@@ -112,7 +112,7 @@ private void stopObservingUpdate() {
 }
 ```
 
-# Binding to Unity
+# 5. Binding to Unity
 You first need to create binder object like so:
 ```cpp
 using UnityEngine;
