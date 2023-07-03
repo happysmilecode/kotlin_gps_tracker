@@ -55,7 +55,7 @@ alienPortal.stop();
 ```
 
 # 4. Observing
-You will need to update the data manually using thread or something else like thread.
+You will need to observe the data manually using thread or something else like thread.
 ```java
 /** # Observer **/
 private Thread observerThread;
