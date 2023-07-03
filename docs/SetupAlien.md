@@ -111,3 +111,123 @@ private void stopObservingUpdate() {
     }
 }
 ```
+
+# Binding to Unity
+You first need to create binder object like so:
+```cpp
+using UnityEngine;
+using System.Collections.Generic;
+
+public class AlienPortalWrapper
+{
+    private AndroidJavaObject alienPortalInstance;
+
+    public AlienPortalWrapper()
+    {
+        AndroidJavaClass alienPortalClass = new AndroidJavaClass("com.singularity_code.live_location.util.other.AlienPortal");
+        alienPortalInstance = alienPortalClass.CallStatic<AndroidJavaObject>("newInstance");
+    }
+
+    public string GetStatus()
+    {
+        return alienPortalInstance.Call<string>("getStatus");
+    }
+
+    public string GetErrorMessage()
+    {
+        return alienPortalInstance.Call<string>("getErrorMessage");
+    }
+
+    public string GetLatitude()
+    {
+        return alienPortalInstance.Call<string>("getLatitude");
+    }
+
+    public string GetLongitude()
+    {
+        return alienPortalInstance.Call<string>("getLongitude");
+    }
+
+    public string GetAccuracy()
+    {
+        return alienPortalInstance.Call<string>("getAccuracy");
+    }
+
+    public string GetUpdatedTime()
+    {
+        return alienPortalInstance.Call<string>("getUpdatedTime");
+    }
+
+    public void SetGPSSamplingRate(long samplingRate)
+    {
+        alienPortalInstance.Call("setGPSSamplingRate", samplingRate);
+    }
+
+    public void SetContext(Context context)
+    {
+        alienPortalInstance.Call("setContext", context);
+    }
+
+    public void SetChannelId(string id)
+    {
+        alienPortalInstance.Call("setChannelId", id);
+    }
+
+    public void SetChannelName(string name)
+    {
+        alienPortalInstance.Call("setChannelName", name);
+    }
+
+    public void SetChannelDescription(string description)
+    {
+        alienPortalInstance.Call("setChannelDescription", description);
+    }
+
+    public void SetupAPIorSocketURL(string url)
+    {
+        alienPortalInstance.Call("setupAPIorSocketURL", url);
+    }
+
+    public void SetNotificationTitle(string title)
+    {
+        alienPortalInstance.Call("setNotificationTitle", title);
+    }
+
+    public void SetNotificationMessage(string message)
+    {
+        alienPortalInstance.Call("setNotificationMessage", message);
+    }
+
+    public void SetupNetworkMethod(int methodEnumIndex)
+    {
+        alienPortalInstance.Call("setupNetworkMethod", methodEnumIndex);
+    }
+
+    public void AddHeader(string key, string value)
+    {
+        alienPortalInstance.Call("addHeader", key, value);
+    }
+
+    public void ClearHeader()
+    {
+        alienPortalInstance.Call("clearHeader");
+    }
+
+    public void SetMessageDescriptor(string descriptor)
+    {
+        alienPortalInstance.Call("setMessageDescriptor", descriptor);
+    }
+
+    public void Start()
+    {
+        alienPortalInstance.Call("start");
+    }
+
+    public void Stop()
+    {
+        alienPortalInstance.Call("stop");
+    }
+}
+```
+
+Then have you call the function in the exact same orders on the setup section number 2 above before starting the service.

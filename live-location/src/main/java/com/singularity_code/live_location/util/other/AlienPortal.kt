@@ -1,41 +1,38 @@
 package com.singularity_code.live_location.util.other
 
-import android.annotation.SuppressLint
 import android.content.Context
 import androidx.core.app.NotificationCompat
 import com.singularity_code.live_location.util.enums.NetworkMethod
-import com.singularity_code.live_location.util.pattern.GPSConfig
-import com.singularity_code.live_location.util.pattern.LiveLocationNetworkConfiguration
-import com.singularity_code.live_location.util.pattern.LiveLocationServiceInteractor
-import com.singularity_code.live_location.util.pattern.LiveLocationServiceInteractorAbs
-import com.singularity_code.live_location.util.pattern.NotificationConfig
+import com.singularity_code.live_location.util.pattern.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 /**
- * In case u are using alien technologi such Xamarin/Unity, C++, or anything non java platform,
+ * In case you are using alien technologi such Xamarin/Unity, C++, or anything non java platform,
  * you can use this ALienPortal instance to interact with the LiveLocationService.
  */
-@SuppressLint("StaticFieldLeak")
 class AlienPortal {
 
     // observable
     private var _status: String = "DEAD"
-    val status get() = _status
+    fun getStatus() = _status
 
     private var _errorMessage: String? = null
-    val errorMessage get() = _errorMessage
+    fun getErrorMessage() = _errorMessage
 
     private var _latitude: String? = null
-    val latitude: String? get() = _latitude
+    fun getLatitude(): String? = _latitude
+
     private var _longitude: String? = null
-    val longitude: String? get() = _longitude
+    fun getLongitude(): String? = _longitude
+
     private var _accuracy: String? = null
-    val accuracy: String? get() = _accuracy
+    fun getAccuracy(): String? = _accuracy
+
     private var _updatedTime: String? = null
-    val updatedTime: String? get() = _updatedTime
+    fun getUpdatedTime(): String? = _updatedTime
 
     // gps config
     private var gpsSamplingRate = 10000L
