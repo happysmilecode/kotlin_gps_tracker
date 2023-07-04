@@ -26,10 +26,13 @@ abstract class LiveLocationServiceInteractorAbs : LiveLocationServiceInteractor 
                 CoroutineScope(Dispatchers.IO).launch {
                     binder?.currentLocation?.collect {
                         it?.apply {
+                            if (locationResult.lastLocation == null)
+                                return@collect
+
                             onReceiveUpdate(
-                                latitude = locationResult.lastLocation.latitude,
-                                longitude = locationResult.lastLocation.longitude,
-                                accuracy = locationResult.lastLocation.accuracy,
+                                latitude = locationResult.lastLocation!!.latitude,
+                                longitude = locationResult.lastLocation!!.longitude,
+                                accuracy = locationResult.lastLocation!!.accuracy,
                                 updateTime = updateTime
                             )
                         }

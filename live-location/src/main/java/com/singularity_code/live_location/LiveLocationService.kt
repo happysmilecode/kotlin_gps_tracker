@@ -102,13 +102,16 @@ class LiveLocationService : Service() {
             super.onLocationResult(p0)
 
             p0.runCatching {
+                if (lastLocation == null)
+                    throw Error("location result null")
+
                 coroutineScope.launch {
                     val updateTime = System.currentTimeMillis()
 
                     val data = hashMapOf(
-                        "latitude" to lastLocation.latitude,
-                        "longitude" to lastLocation.longitude,
-                        "accuracy" to lastLocation.accuracy,
+                        "latitude" to lastLocation!!.latitude,
+                        "longitude" to lastLocation!!.longitude,
+                        "accuracy" to lastLocation!!.accuracy,
                         "updateTime" to updateTime
                     ).let {
                         Gson().toJson(it)
