@@ -15,14 +15,18 @@ org.jetbrains.kotlin:kotlin-stdlib:1.8.22
 org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.0
 io.arrow-kt:arrow-core-jvm:1.2.0-RC
 ```
-# 1. Get Instance
+# 1. Build the Jar and Import File
+To build the .aar (android app library) file, you can simply run the `build-library.sh` script in the root project. The AAR file will be created in `/build/library/` folder for both debug and release.
+Import the file to your project, then you can start the setup.
+
+# 2. Get Instance
 You can get the instance this way:
 ```java
 // from package com.singularity_code.live_location.util.other.AlienPortal
 private final AlienPortal alienPortal = AlienPortal.INSTANCE;
 ```
 
-# 2. Setup
+# 3. Setup
 ```java
 private void startLiveLocationService() {
 
@@ -59,13 +63,13 @@ private void startLiveLocationService() {
 }
 ```
 
-# 3. Start and Stop
+# 4. Start and Stop
 ```java
 alienPortal.start();
 alienPortal.stop();
 ```
 
-# 4. Observing
+# 5. Observing
 You will need to observe the data manually using thread or something else like thread.
 ```java
 /** # Observer **/
@@ -123,7 +127,7 @@ private void stopObservingUpdate() {
 }
 ```
 
-# 5. Binding to Unity
+# 6. Binding to Unity
 You first need to create binder object like so:
 ```cpp
 using UnityEngine;
