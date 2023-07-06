@@ -35,7 +35,7 @@ See [SetupAlien.md](docs%2FSetupAlien.md).
 This library will automatically sync your data to network, the body request will be
 ```json
 {
-  "data": "{\"accuracy\":17.72,\"updateTime\":1687750809224,\"latitude\":-6.8729337,\"longitude\":107.587445}",
+  "data": "{\"altitude\":0.0,\"speedAccuracyMeterPerSec\":0.5,\"bearing\":0.0,\"latitude\":37.29547,\"accuracy\":11.256,\"updateTime\":1688681353248,\"speed\":0.0,\"longitude\":-121.1872217,\"verticalAccuracyMeters\":0.5}",
   "descriptor": "{\"userID\":\"85158.72113324582\",\"messagingToken\":\"Dummy Messaging Token\"}"
 }
 ```
