@@ -1,4 +1,6 @@
 # Background Location Service
+<img src="https://github.com/SingularityIndonesia/ForegroundGPSTracker/blob/main/docs/Screenshot%20from%202023-07-07%2005-04-43.png" width="100" alt="Singularity Indonesia">
+<img src="https://github.com/SingularityIndonesia/ForegroundGPSTracker/blob/main/docs/Screenshot%20from%202023-07-07%2005-05-03.png" width="100" alt="Singularity Indonesia">
 
 ## Dependency Setting
 
