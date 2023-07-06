@@ -40,12 +40,12 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
-    api "com.google.android.gms:play-services-location:21.0.1"
-    api "com.google.android.gms:play-services-maps:18.1.0"
-    api 'com.squareup.retrofit2:retrofit:2.9.0'
-    api 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation "com.google.android.gms:play-services-location:21.0.1"
+    implementation "com.google.android.gms:play-services-maps:18.1.0"
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
-    api "com.squareup.okhttp3:okhttp:5.0.0-alpha.9"
+    implementation "com.squareup.okhttp3:okhttp:5.0.0-alpha.9"
 
     debugImplementation "com.github.chuckerteam.chucker:library:3.5.2"
     releaseImplementation "com.github.chuckerteam.chucker:library-no-op:3.5.2"
@@ -53,6 +53,9 @@ dependencies {
     implementation "io.arrow-kt:arrow-core:1.2.0-RC"
     implementation "io.arrow-kt:arrow-fx-coroutines:1.2.0-RC"
 
-    api ('org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.0')
-    api "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1"
 }
