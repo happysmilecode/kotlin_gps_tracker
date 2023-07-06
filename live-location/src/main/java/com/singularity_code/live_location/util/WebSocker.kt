@@ -1,13 +1,18 @@
 package com.singularity_code.live_location.util
 
+import android.content.Context
 import android.util.Log
 import okhttp3.*
 
 fun websocket(
+    context: Context,
     apiURL: String,
     headers: HashMap<String,String>
 ): WebSocket {
-    val client = OkHttpClient()
+    val client = OkHttpClient.Builder()
+        .addInterceptor(chuckerInterceptor(context))
+        .build()
+
     val request = Request.Builder()
         .apply {
             url(apiURL)
@@ -18,6 +23,8 @@ fun websocket(
             }
         }
         .build()
+
+
 
     return client.newWebSocket(
         request,

@@ -34,6 +34,7 @@ class WebSocketRepository(
 
     private val webSocket by lazy {
         websocket(
+            context = context,
             apiURL = url,
             headers = headers
         )
