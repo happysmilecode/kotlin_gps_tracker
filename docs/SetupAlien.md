@@ -3,7 +3,18 @@ If you are using alien technology such Xamarin/Unity, C++ and other non java pla
 you can use AlienPortal object to interact with the service.
 
 You can see the example here [JavaAlienActivity](..%2Fapp%2Fsrc%2Fmain%2Fjava%2Fcom%2Fsingularity_code%2Fgpstracker%2Factivity%2FJavaAlienActivity.java).
-
+# Note
+If you are using Unity project or else without google dependency resolver, you'll probably need to add these dependencies:
+```java
+com.google.android.gms:play-services-location:21.0.1
+com.google.android.gms:play-services-maps:18.1.0
+com.squareup.retrofit2:retrofit:2.9.0
+com.squareup.retrofit2:converter-gson:2.9.0
+com.squareup.okhttp3:okhttp:4.10.0
+org.jetbrains.kotlin:kotlin-stdlib:1.8.22
+org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.0
+io.arrow-kt:arrow-core-jvm:1.2.0-RC
+```
 # 1. Get Instance
 You can get the instance this way:
 ```java
