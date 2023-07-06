@@ -147,7 +147,6 @@ class LiveLocationService : Service() {
                     liveLocationError.emit(null)
                 }
 
-                Log.d("TAG", "onLocationResult: ${p0.lastLocation}")
             }.onFailure {
 
                 coroutineScope.launch {
@@ -155,7 +154,6 @@ class LiveLocationService : Service() {
                         it.message ?: it.cause?.message ?: "Unknown Error"
                     )
                 }
-                Log.d("TAG", "onLocationResult: $it")
             }
         }
     }
