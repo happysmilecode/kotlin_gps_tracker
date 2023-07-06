@@ -63,8 +63,8 @@ So the permission request should be done in 2 steps:
 ## Build AAR Libray
 If you need the aar file, to build the library just run the `build-library.sh` in the project root directory.
 
-## Design and Developed by :
-- [Stefanus Ayudha](https://github.com/stefanusayudha)
-- [Singularity Indonesia](https://github.com/SingularityIndonesia)
+## Design and Developed by: [Stefanus Ayudha](https://github.com/stefanusayudha)
+Feel free to askme any question and support.
+## Powered by: [Singularity Indonesia](https://github.com/SingularityIndonesia)
 
 <img src="https://raw.githubusercontent.com/SingularityIndonesia/SingularityIndonesia/main/Logo%20Of%20Singularity%20Indonesia%20%C2%A92023%20Stefanus%20Ayudha.png" width="64" alt="Singularity Indonesia">
