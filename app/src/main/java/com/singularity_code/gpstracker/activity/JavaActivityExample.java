@@ -1,25 +1,17 @@
 package com.singularity_code.gpstracker.activity;
 
-import static com.singularity_code.gpstracker.util.ConstKt.CHANNEL_DESCRIPTION;
-import static com.singularity_code.gpstracker.util.ConstKt.CHANNEL_ID;
-import static com.singularity_code.gpstracker.util.ConstKt.CHANNEL_NAME;
-
 import android.app.Activity;
 import android.content.Context;
-
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
-
 import com.google.gson.Gson;
 import com.singularity_code.live_location.util.enums.NetworkMethod;
-import com.singularity_code.live_location.util.pattern.GPSConfig;
-import com.singularity_code.live_location.util.pattern.LiveLocationNetworkConfiguration;
-import com.singularity_code.live_location.util.pattern.LiveLocationServiceInteractor;
-import com.singularity_code.live_location.util.pattern.LiveLocationServiceInteractorAbs;
-import com.singularity_code.live_location.util.pattern.NotificationConfig;
+import com.singularity_code.live_location.util.pattern.*;
 
 import java.util.HashMap;
+
+import static com.singularity_code.gpstracker.util.ConstKt.*;
 
 public class JavaActivityExample extends Activity {
     private String userID = "USER ID";

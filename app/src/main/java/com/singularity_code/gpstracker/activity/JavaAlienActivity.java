@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
-
 import com.singularity_code.live_location.util.other.AlienPortal;
 
 public class JavaAlienActivity extends Activity {

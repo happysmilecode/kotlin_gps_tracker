@@ -1,7 +1,6 @@
 package com.singularity_code.live_location.util.pattern
 
 import android.content.Context
-import androidx.annotation.DrawableRes
 import androidx.annotation.MainThread
 
 interface LiveLocationServiceInteractor {
