@@ -14,6 +14,7 @@ import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.os.Looper
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -125,6 +126,8 @@ class LiveLocationService : Service() {
                         }
                     }.let {
                         Gson().toJson(it)
+                    }.also {
+                        Log.d(this@LiveLocationService::class.simpleName, "new location: $it")
                     }
 
                     val payload = hashMapOf<String, String>()
@@ -139,6 +142,7 @@ class LiveLocationService : Service() {
                             Gson().toJson(it)
                         }
 
+                    Log.d(this@LiveLocationService::class.simpleName, "push data to server: $payload")
                     repository.sendData(payload)
                         .mapLeft {
                             liveLocationError.emit(it)
