@@ -1,4 +1,5 @@
 # Background Location Service
+Location service that still running when the app is minimized.
 <p float="left">
 <img src="https://github.com/SingularityIndonesia/ForegroundGPSTracker/blob/main/docs/Screenshot%20from%202023-07-07%2005-04-43.png" width="300" alt="Singularity Indonesia">
 <img src="https://github.com/SingularityIndonesia/ForegroundGPSTracker/blob/main/docs/Screenshot%20from%202023-07-07%2005-05-03.png" width="300" alt="Singularity Indonesia">
