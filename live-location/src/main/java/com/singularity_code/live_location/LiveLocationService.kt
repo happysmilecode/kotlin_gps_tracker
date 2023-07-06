@@ -14,7 +14,6 @@ import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.os.Looper
-import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -36,7 +35,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.io.File
-import java.io.FileDescriptor
 
 class LiveLocationService : Service() {
 
@@ -112,8 +110,20 @@ class LiveLocationService : Service() {
                         "latitude" to lastLocation!!.latitude,
                         "longitude" to lastLocation!!.longitude,
                         "accuracy" to lastLocation!!.accuracy,
+                        "altitude" to lastLocation!!.altitude,
+                        "bearing" to lastLocation!!.bearing,
+                        "speed" to lastLocation!!.speed,
                         "updateTime" to updateTime
-                    ).let {
+                    ).apply {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            put(
+                                "speedAccuracyMeterPerSec", lastLocation!!.speedAccuracyMetersPerSecond,
+                            )
+                            put(
+                                "verticalAccuracyMeters", lastLocation!!.verticalAccuracyMeters
+                            )
+                        }
+                    }.let {
                         Gson().toJson(it)
                     }
 
