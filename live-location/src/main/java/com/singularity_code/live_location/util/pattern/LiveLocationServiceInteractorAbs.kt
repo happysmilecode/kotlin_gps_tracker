@@ -29,12 +29,15 @@ abstract class LiveLocationServiceInteractorAbs : LiveLocationServiceInteractor 
                             if (locationResult.lastLocation == null)
                                 return@collect
 
+                            // TODO: soon be removed
                             onReceiveUpdate(
                                 latitude = locationResult.lastLocation!!.latitude,
                                 longitude = locationResult.lastLocation!!.longitude,
                                 accuracy = locationResult.lastLocation!!.accuracy,
                                 updateTime = updateTime
                             )
+
+                            onReceiveUpdate(locationResult)
                         }
                     }
                 }
