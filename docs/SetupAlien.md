@@ -16,7 +16,8 @@ org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.0
 io.arrow-kt:arrow-core-jvm:1.2.0-RC
 ```
 # 1. Build the Jar and Import File
-To build the .aar (android app library) file, you can simply run the `build-library.sh` script in the root project. The AAR file will be created in `/build/library/` folder for both debug and release.
+If you are more convenient using `jar` or `aar` file, follow this step:
+To build the `.aar` (android app library) file, you can simply run the `build-library.sh` script in the root project. The AAR file will be created in `/build/library/` folder for both debug and release.
 Import the file to your project, then you can start the setup.
 
 # 2. Get Instance
