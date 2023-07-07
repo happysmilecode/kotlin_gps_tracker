@@ -17,8 +17,10 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
+import com.singularity_code.gpstracker.component.SenderCard
 import com.singularity_code.gpstracker.ui.theme.GPSTrackerTheme
 import com.singularity_code.gpstracker.util.CHANNEL_DESCRIPTION
 import com.singularity_code.gpstracker.util.CHANNEL_ID
@@ -35,13 +37,7 @@ class MainActivity : ComponentActivity() {
         const val BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE = 101
     }
 
-    private val userID by lazy { Math.random() * 100000 }
-    private val messagingToken by lazy { "Dummy Messaging Token" }
-
-    private val location = MutableStateFlow<LatLng?>(null)
-    private val liveLocationRunning = MutableStateFlow(false)
-    private val liveLocationError = MutableStateFlow<String?>(null)
-
+    /** # Service Interactor **/
     private val liveLocationServiceInteractor =
         object : LiveLocationServiceInteractorAbs() {
             override val context: Context = this@MainActivity
@@ -106,16 +102,15 @@ class MainActivity : ComponentActivity() {
             }
 
             override fun onReceiveUpdate(
-                latitude: Double,
-                longitude: Double,
-                accuracy: Float,
-                updateTime: Long
+                location: LocationResult
             ) {
+                if (location.lastLocation == null) return
+
                 lifecycleScope.launch {
-                    location.emit(
+                    this@MainActivity.location.emit(
                         LatLng(
-                            latitude,
-                            longitude
+                            location.lastLocation!!.latitude,
+                            location.lastLocation!!.longitude
                         )
                     )
                 }
@@ -123,6 +118,52 @@ class MainActivity : ComponentActivity() {
 
         }
 
+    /** # Fake Credential **/
+    private val userID by lazy { Math.random() * 100000 }
+    private val messagingToken by lazy { "Dummy Messaging Token" }
+
+    /** # Live Data **/
+    private val location = MutableStateFlow<LatLng?>(null)
+    private val liveLocationRunning = MutableStateFlow(false)
+    private val liveLocationError = MutableStateFlow<String?>(null)
+
+    @SuppressLint("InlinedApi")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        /** Request Permission **/
+        requestForegroundPermission()
+
+        /** Draw Screen **/
+        setContent { Screen() }
+    }
+
+    @Composable
+    private fun Screen() {
+        GPSTrackerTheme {
+
+            // A surface container using the 'background' color from the theme
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.background
+            ) {
+                Column {
+                    Text(
+                        text = "Sender",
+                        modifier = Modifier.padding(16.dp, 16.dp, 0.dp, 0.dp),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    SenderCard(
+                        liveLocationServiceInteractor,
+                        location.collectAsState().value,
+                        liveLocationRunning.collectAsState().value,
+                        liveLocationError.collectAsState().value
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+            }
+        }
+    }
 
     private fun checkPermission(
         permissions: List<String>
@@ -134,40 +175,6 @@ class MainActivity : ComponentActivity() {
             ) == PackageManager.PERMISSION_GRANTED
         }.fold(true) { l, r ->
             l && r
-        }
-    }
-
-    @SuppressLint("InlinedApi")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        /** Request Permission **/
-        requestForegroundPermission()
-
-        setContent {
-            GPSTrackerTheme {
-
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Column {
-                        Text(
-                            text = "Sender",
-                            modifier = Modifier.padding(16.dp, 16.dp, 0.dp, 0.dp),
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                        Sender(
-                            liveLocationServiceInteractor,
-                            location.collectAsState().value,
-                            liveLocationRunning.collectAsState().value,
-                            liveLocationError.collectAsState().value
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
-                }
-            }
         }
     }
 
@@ -235,73 +242,6 @@ class MainActivity : ComponentActivity() {
                 /** request background permission **/
                 requestBackgroundPermission()
             }
-        }
-    }
-}
-
-@Composable
-fun Sender(
-    interactor: LiveLocationServiceInteractor,
-    location: LatLng?,
-    liveLocationRunning: Boolean,
-    liveLocationError: String?
-) {
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(text = location.toString())
-            Text(text = "Running $liveLocationRunning")
-            Text(text = "Error $liveLocationError")
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row {
-                Button(
-                    onClick = {
-                        interactor.stopService()
-                    },
-                    modifier = Modifier.weight(1f),
-                    enabled = liveLocationRunning ?: false
-                ) {
-                    Text(text = "Stop Service")
-                }
-                Spacer(modifier = Modifier.width(8.dp))
-                Button(
-                    onClick = {
-                        interactor.startService(
-                            notificationTitle = "Live Location",
-                            notificationMessage = "Singularity Live Location"
-                        )
-                    },
-                    modifier = Modifier.weight(1f),
-                    enabled = !(liveLocationRunning ?: false)
-                ) {
-                    Text(text = "Start Service")
-                }
-            }
-
-        }
-    }
-}
-
-@Composable
-fun Receiver() {
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(text = "Location = ")
-            Text(text = "Updated Time = ${System.currentTimeMillis()}")
         }
     }
 }
