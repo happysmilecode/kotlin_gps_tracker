@@ -75,16 +75,15 @@ private val liveLocationServiceInteractor =
             }
 
             override fun onReceiveUpdate(
-                latitude: Double,
-                longitude: Double,
-                accuracy: Float,
-                updateTime: Long
+                location: LocationResult
             ) {
+                if (location.lastLocation == null) return
+
                 lifecycleScope.launch {
-                    location.emit(
+                    this@MainActivity.location.emit(
                         LatLng(
-                            latitude,
-                            longitude
+                            location.lastLocation!!.latitude,
+                            location.lastLocation!!.longitude
                         )
                     )
                 }
