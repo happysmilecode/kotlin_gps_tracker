@@ -172,6 +172,16 @@ public class AlienPortalWrapper
     {
         return alienPortalInstance.Call<string>("getUpdatedTime");
     }
+    
+    public string GetAltitude()
+    {
+        return alienPortalInstance.Call<string>("getAltitude");
+    }
+    
+    public string GetVerticalAccuracyMeter()
+    {
+        return alienPortalInstance.Call<string>("getAltitudeAccuracyMeter");
+    }
 
     public void SetGPSSamplingRate(long samplingRate)
     {
