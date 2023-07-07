@@ -93,6 +93,7 @@ public class JavaAlienActivity extends Activity {
                     String longitude = portal.getLongitude();
                     String accuracy = portal.getAccuracy();
                     String updatedTime = portal.getUpdatedTime();
+                    String altitude = portal.getAltitude();
 
                     sb = new StringBuilder();
                     sb.append("status : ").append(status).append("\n");
@@ -100,6 +101,7 @@ public class JavaAlienActivity extends Activity {
                     sb.append("longitude : ").append(longitude).append("\n");
                     sb.append("accuracy : ").append(accuracy).append("\n");
                     sb.append("updatedTime : ").append(updatedTime).append("\n");
+                    sb.append("altitude : ").append(altitude).append("\n");
 
                     Log.d("LiveLocation", "Current: " + sb);
 
