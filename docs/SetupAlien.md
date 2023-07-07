@@ -255,4 +255,4 @@ public class AlienPortalWrapper
 }
 ```
 
-Then have you call the function in the exact same orders on the setup section number 2 above before starting the service.
+Then have you call the function in the exact same orders on the setup section number 3 above before starting the service.
