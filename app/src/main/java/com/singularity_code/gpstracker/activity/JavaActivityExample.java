@@ -5,9 +5,11 @@ import android.content.Context;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import com.google.android.gms.location.LocationResult;
 import com.google.gson.Gson;
 import com.singularity_code.live_location.util.enums.NetworkMethod;
 import com.singularity_code.live_location.util.pattern.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
@@ -211,7 +213,7 @@ public class JavaActivityExample extends Activity {
         }
 
         @Override
-        public void onReceiveUpdate(double latitude, double longitude, float accuracy, long updateTime) {
+        public void onReceiveUpdate(@NotNull LocationResult location) {
             // TODO : Do what you need
         }
     };
