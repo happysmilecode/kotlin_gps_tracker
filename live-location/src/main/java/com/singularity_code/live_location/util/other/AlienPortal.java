@@ -1,7 +1,9 @@
 package com.singularity_code.live_location.util.other;
 
 import android.content.Context;
+import android.os.Build;
 import androidx.core.app.NotificationCompat;
+import com.google.android.gms.location.LocationResult;
 import com.singularity_code.live_location.util.enums.NetworkMethod;
 import com.singularity_code.live_location.util.pattern.*;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +35,16 @@ public class AlienPortal {
         return _latitude;
     }
 
+    private String _altitude;
+
+    public String getAltitude() {
+        return _altitude;
+    }
+
+    private String _altitudeAccuracyMeter;
+    public String getAltitudeAccuracyMeter() {
+        return _altitudeAccuracyMeter;
+    }
     private String _longitude;
 
     public String getLongitude() {
@@ -209,11 +221,21 @@ public class AlienPortal {
             }
 
             @Override
-            public void onReceiveUpdate(double latitude, double longitude, float accuracy, long updateTime) {
-                AlienPortal.this._latitude = String.valueOf(latitude);
-                AlienPortal.this._longitude = String.valueOf(longitude);
-                AlienPortal.this._accuracy = String.valueOf(accuracy);
-                AlienPortal.this._updatedTime = String.valueOf(updateTime);
+            public void onReceiveUpdate(@NotNull LocationResult location) {
+                if (location.getLastLocation() == null) return;
+
+                AlienPortal.this._latitude = String.valueOf(location.getLastLocation().getLatitude());
+                AlienPortal.this._longitude = String.valueOf(location.getLastLocation().getLongitude());
+                AlienPortal.this._accuracy = String.valueOf(location.getLastLocation().getAccuracy());
+                AlienPortal.this._updatedTime = String.valueOf(location.getLastLocation().getTime());
+
+                if (location.getLastLocation().hasAltitude()) {
+                    AlienPortal.this._altitude = String.valueOf(location.getLastLocation().getAltitude());
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        AlienPortal.this._altitudeAccuracyMeter = String.valueOf(location.getLastLocation().getVerticalAccuracyMeters());
+                    }
+                }
             }
         };
 
